@@ -6,20 +6,63 @@
 '''
 import numpy as np
 from enum import Enum
+from typing import NamedTuple, Union
 puzzle_id_counter = 0
+# -------------------------------------------------------------------------------------------------------------------------- #
 
-# Each path can be modeled as a directional inputs.
-# UP = move up by 1 tile, DOWN = move down by 1 tile, etc.
+
+# Used by the Solution class below
 class Direction(Enum):
     UP = 1,
     DOWN = 2,
     LEFT = 3, 
     RIGHT = 4
 
+    def __str__(self):
+        return '%s' % self.value
+
 
 # -------------------------------------------------------------------------------------------------------------------------- #
 
+'''Just a struct that contains 2 important pieces of info for a solution: the path (exx [(-1, 1), (3, 5), ...]) 
+   and the direction changes needed to be on that path (ex: [UP, DOWN, RIGHT, UP, ...])'''
+class Solution:
+    def __init__(self,path):
+        self.path = path
+        self.movements = []
+        self.calculateMovements()
 
+    def calculateMovements(self):
+        # if there's a positive change on the y-axis, we moved down
+        # if there's a negative change on the y-axis, we moved up
+        # if there's a positive change on the x-axis, we moved right
+        # if there's a negative change on the x-axis, we moved left
+        # if we were already moving in that direction, it does not count. 
+        # at least in theory, only one of these should ever change for adjacent points in the path.
+        prevDir = None
+        # -2 because the last point in the path will be (-1, -1)
+        for i in range(len(self.path) - 2):
+            dx = self.path[i + 1][0] - self.path[i][0]
+            dy = self.path[i + 1][1] - self.path[i][1]
+            if (self.path[i + 1] != (-1, -1) and dx != 0 and dy != 0):
+                raise Exception(f'Impossible path somehow found. Somehow went from {self.path[i]} to {self.path[i + 1]}')
+            if (dx == 0 and dy == 0):
+                raise Exception(f'Bad path found. Didn\'t move between {self.path[i]} and {self.path[i + 1]}')
+            
+            if dy > 0 and prevDir != Direction.DOWN:
+                self.movements.append(Direction.DOWN)
+            elif dy < 0 and prevDir != Direction.UP:
+                self.movements.append(Direction.UP)
+            elif dx > 0 and prevDir != Direction.RIGHT:
+                self.movements.append(Direction.RIGHT)
+            elif dx < 0 and prevDir != Direction.LEFT:
+                self.movements.append(Direction.LEFT)
+
+        self.movements.append(Direction.DOWN) #path[len - 2] is the last non-victory point, just need to go down again to get victory.
+
+# -------------------------------------------------------------------------------------------------------------------------- #
+
+'''Container for the puzzle grid, with a few extra fields for convience.'''
 class Puzzle:
     def __init__(self, n, identifier):
         # size of the puzzle (puzzle is N x N grid)
@@ -123,7 +166,7 @@ class Puzzle:
 
 # -------------------------------------------------------------------------------------------------------------------------- #
 
-
+'''Generates and solves puzzles. '''
 class PuzzleGenerator:
     def __init__(self, num_puzzles_to_generate):
         self.num_puzzles_to_generate = num_puzzles_to_generate
@@ -145,7 +188,6 @@ class PuzzleGenerator:
     def attemptToSolve(self, puzzle):
 
         self.bfs(puzzle)
-
         if puzzle.num_solutions >= 1:
             print(f'puzzle {puzzle_id_counter} is solvable.')
             return True
@@ -170,6 +212,8 @@ class PuzzleGenerator:
 
             #if we win, we're done with this path
             if lastPos == (-1, -1):
+                sol = Solution(path)
+                print(sol.movements)
                 print(f'completed path through these coords: {path}')
                 continue
 
