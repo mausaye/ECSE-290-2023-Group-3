@@ -1,0 +1,7 @@
+There are multiple "layers" for tiles. There is the ground, which 
+is basically just background stuff that you can't collide with. Then 
+there are boundary tiles, which are also in the background, but you can't walk through
+(i.e. stuff like walls). Finally, there are Inanimate objects, these are in the foreground 
+and you also cannot walk through. This is where static sprites should go. It should be pretty 
+clear which layer you want your tile on, so make sure you place it on the right one for the correct
+behavior.
