@@ -3,7 +3,7 @@ from Puzzle_Generation import *
 def main():
     num_puzzles = input("How many puzzles to generate")
     generator = PuzzleGenerator(num_puzzles)
-    p = Puzzle(10, 0)
+    p = Puzzle(15, 0)
     print(p)
     generator.attemptToSolve(p)
 

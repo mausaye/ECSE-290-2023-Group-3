@@ -143,6 +143,7 @@ class PuzzleGenerator:
 
     # Find ALL non-circular solutions, return if it can be done. Assign the number of solutions and average path complexity (number of movements needed) variables to get idea of difficulty.
     def attemptToSolve(self, puzzle):
+
         self.bfs(puzzle)
 
         if puzzle.num_solutions >= 1:
@@ -152,13 +153,16 @@ class PuzzleGenerator:
             print(f'puzzle {puzzle_id_counter} is not solvable.')
             return False
     
+
     def bfs(self, puzzle: Puzzle):
-        maxMoves = 100
+        maxIter = 1000 # only look for solutions within 1000 states from beginning 
+
         q = [] #bfs queue 
-        startingPos = (puzzle.begin_x, -1) 
+        startingPos = (puzzle.begin_x, -1) # start slightly off the grid
         q.append([startingPos])
-        moves = 0
-        while (len(q) > 0 and moves < maxMoves):
+        curIter = 0
+        
+        while (len(q) > 0 and curIter < maxIter):
             path = q.pop(0)
 
             # always take most recent position to build off of 
@@ -169,37 +173,42 @@ class PuzzleGenerator:
                 print(f'completed path through these coords: {path}')
                 continue
 
+            
+            # These if statements simply try to go from the current position and process down, right, up, and down (if possible).
+            # "if newMove not in path" -> don't do a cycle. No need to go back to where we already were.
             if (self.canMoveDown(puzzle, lastPos)):
                 newMove = self.moveDown(puzzle, lastPos)
-                if newMove == (-1, -1):
+                if newMove not in path:
+                    newPath = path.copy()
+                    newPath.append(newMove)
+                    q.append(newPath)
 
-                    print(f'completed path through these coords: {path}')
-                    continue
-                newPath = path.copy()
-                newPath.append(newMove)
-                q.append(newPath)
             if (self.canMoveRight(puzzle, lastPos)):
                 newMove = self.moveRight(puzzle, lastPos)
-                newPath = path.copy()
-                newPath.append(newMove)
-                q.append(newPath)
+                if newMove not in path:
+                    newPath = path.copy()
+                    newPath.append(newMove)
+                    q.append(newPath)
+
             if (self.canMoveUp(puzzle, lastPos)):
                 newMove = self.moveUp(puzzle, lastPos)
-                newPath = path.copy()
-                newPath.append(newMove)
-                q.append(newPath)
+                if newMove not in path:
+                    newPath = path.copy()
+                    newPath.append(newMove)
+                    q.append(newPath)
+
             if (self.canMoveLeft(puzzle, lastPos)):
                 newMove = self.moveLeft(puzzle, lastPos)
-                newPath = path.copy()
-                newPath.append(newMove)
-                q.append(newPath)
+                if newMove not in path:
+                    newPath = path.copy()
+                    newPath.append(newMove)
+                    q.append(newPath)
 
-            moves += 1
+            curIter += 1
             
 
     '''Lots of code duplication here, best to refactor at some point.'''
     def canMoveDown(self, puzzle: Puzzle, pos):
-        puzzle_len = puzzle.size
         if (pos[1] + 1 < puzzle.size) and (puzzle.get(pos[0], pos[1] + 1) != 2): #if there isn't an obstacle in the way
             return True
         else:
@@ -209,23 +218,19 @@ class PuzzleGenerator:
     def moveDown(self, puzzle: Puzzle, pos):
         for i in range(pos[1] + 1, puzzle.size):
             if puzzle.get(pos[0], i) == 1:
-                #print(f'could move down by {i - pos[1]} units')
                 return (pos[0], i)
             elif puzzle.get(pos[0], i)== 2:
-                #print(f'could move down by {i - pos[1] - 1} units')
                 return (pos[0], i - 1)
+
         # if here, we can get to other side
         # if on other side and exit is right below us, then we slide to victory
         if puzzle.end_x == pos[0]:
-            print("we made it to end")
             return (-1, -1)
         else:
-            print(f'could move down by {puzzle.size - pos[1] - 1} units')
             return (pos[0], puzzle.size - 1)
 
 
     def canMoveLeft(self, puzzle: Puzzle, pos):
-        puzzle_len = puzzle.size
 
         # if on beginning border, can't be done
         if pos[1] == -1:
@@ -239,17 +244,14 @@ class PuzzleGenerator:
     def moveLeft(self, puzzle: Puzzle, pos):
         for i in range(pos[0] - 1, -1, -1):
             if puzzle.get(i, pos[1]) == 1:
-                #print(f'could move left by {i - pos[1]} units')
                 return (i, pos[1])
             elif puzzle.get(i, pos[1]) == 2:
-                #print(f'could move left by {i - pos[1] - 1} units')
                 return (i + 1, pos[1])
 
         # no victory checks when moving left and right, since exit is only ever on top/bottom.
         return (0, pos[1])
 
     def canMoveRight(self, puzzle: Puzzle, pos):
-        puzzle_len = puzzle.size
 
         # if on beginning border, can't be done
         if pos[1] == -1:
@@ -264,15 +266,12 @@ class PuzzleGenerator:
     def moveRight(self, puzzle: Puzzle, pos):
         for i in range(pos[0] + 1, puzzle.size):
             if puzzle.get(i, pos[1]) == 1:
-                #print(f'could move right by {i - pos[0]} units')
                 return (i, pos[1])
             elif puzzle.get(i, pos[1]) == 2:
-                #print(f'could move right by {i - pos[0] - 1} units')
                 return (i - 1, pos[1])
         return (puzzle.size - 1, pos[1])
             
     def canMoveUp(self, puzzle: Puzzle, pos):
-        puzzle_len = puzzle.size
         # again, bounds check needed on this next line 
         if pos[1] - 1 >= 0 and (puzzle.get(pos[0], pos[1] - 1) != 2): 
             return True
@@ -283,19 +282,10 @@ class PuzzleGenerator:
     def moveUp(self, puzzle: Puzzle, pos):
         for i in range(pos[1] - 1, -1, -1):
             if puzzle.get(pos[0], i) == 1:
-                #print(f'could move up by {pos[1] - i} units')
                 return (pos[0], i)
             elif puzzle.get(pos[0], i) == 2:
-                #print(f'could move up by {pos[1] - i - 1} units')
                 return (pos[0], i + 1)
 
-        # if here, we can get to other side
-        # if on other side and exit is right below us, then we slide to victory
-        if puzzle.end_x == pos[0]:
-            print("we made it to end")
-            return (-1, -1)
-        else:
-            print(f'could move up by {puzzle.size - pos[1] - 1} units')
 
         return (pos[0], 0)
 
