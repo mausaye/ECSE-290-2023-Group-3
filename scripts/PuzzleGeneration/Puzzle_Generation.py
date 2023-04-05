@@ -3,10 +3,18 @@
 
     The idea is to run this file, generate a large number of puzzles (maybe 100-10,000 for each difficulty), and then encode them in some simple file format. These will be generated into the
     "EncodedPuzzles" directory. This directory must be copied over to some directory within src/game/. When playing the game, it will randomly choose one of the generated puzzles for each level.
+
+    TODO (for the puzzle generation):
+        - Probably need to make it so you start at bottom and go to top. Shouldn't be too hard to refactor, but could be a bit annoying.
+        - Make difficulty calculation. Both the movement list and the number of (reasonable) solutions are now found, so trial and error 
+          needs to happen to figure that out what the expression should be.
+        - Encoding/Decoding algorithm. Encoding (i.e. writing to file) happens in this file, Decoding, happens in a C# script called from Unity.
+        - 
+
+
 '''
 import numpy as np
 from enum import Enum
-from typing import NamedTuple, Union
 puzzle_id_counter = 0
 # -------------------------------------------------------------------------------------------------------------------------- #
 
