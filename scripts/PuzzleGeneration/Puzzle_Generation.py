@@ -4,10 +4,11 @@
     The idea is to run this file, generate a large number of puzzles (maybe 100-10,000 for each difficulty), and then encode them in some simple file format. These will be generated into the
     "EncodedPuzzles" directory. This directory must be copied over to some directory within src/game/. When playing the game, it will randomly choose one of the generated puzzles for each level.
 
+    As of right now, the puzzle generator generates about 100 valid, solvable 10 x 10 puzzles per second.
+
     TODO (for the puzzle generation):
         - Probably need to make it so you start at bottom and go to top. Shouldn't be too hard to refactor, but could be a bit annoying.
-        - Make difficulty calculation. Both the movement list and the number of (reasonable) solutions are now found, so trial and error 
-          needs to happen to figure that out what the expression should be.
+        - Make difficulty calculation more accurate
         - Encoding/Decoding algorithm. Encoding (i.e. writing to file) happens in this file, Decoding, happens in a C# script called from Unity.
         - Fix whatever bugs may be in the code
         - Refactor huge chunks of repeated code.
@@ -106,7 +107,6 @@ class Puzzle:
         '''
         self.avg_nontrivial_path_complexity = -1.0 # unassigned initially
 
-        # Each path in paths is the set of inputs required to get from entrance to exit for that specific path.
 
         self.grid = np.zeros(shape=(n, n))
 
@@ -139,7 +139,7 @@ class Puzzle:
             else:
                 total_path_complexity = i * len(solution.dirs)
             i -= 1
-        print(self.solutions[0].dirs)
+        #print(self.solutions[0].dirs)
         avg_path_complexity = total_path_complexity / num_sols
 
         return sol_weight * num_sols + path_weight * avg_path_complexity
@@ -219,9 +219,11 @@ class PuzzleGenerator:
         pass
 
 
-    def generate(self, size):
+    def generate(self, puzzle_size):
+        global puzzle_id_counter
         while len(self.solvable_puzzles) < self.num_puzzles_to_generate:
-            trialPuzzle = Puzzle(size)
+            trialPuzzle = Puzzle(puzzle_size, puzzle_id_counter)
+            puzzle_id_counter += 1
             solvable = self.attemptToSolve(trialPuzzle)
             if solvable:
                 self.solvable_puzzles.append(trialPuzzle)
