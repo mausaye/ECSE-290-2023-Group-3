@@ -9,8 +9,10 @@
         - Make difficulty calculation. Both the movement list and the number of (reasonable) solutions are now found, so trial and error 
           needs to happen to figure that out what the expression should be.
         - Encoding/Decoding algorithm. Encoding (i.e. writing to file) happens in this file, Decoding, happens in a C# script called from Unity.
-        - 
-
+        - Fix whatever bugs may be in the code
+        - Refactor huge chunks of repeated code.
+    Bonus Todods:
+        - Visualization of puzzles and their solutions beyond text output 
 
 '''
 import numpy as np
@@ -37,10 +39,14 @@ class Direction(Enum):
 class Solution:
     def __init__(self,path):
         self.path = path
-        self.movements = []
-        self.calculateMovements()
 
-    def calculateMovements(self):
+        # Note: This remains in (at least nrearly) non-decreasing order due to the natural way BFS works. 
+        # The reason I say "nearly" is because BFS is organizing things based on tile to tile movements, rather than direction changes.
+        self.dirs = [] 
+
+        self.calculateDirs()
+
+    def calculateDirs(self):
         # if there's a positive change on the y-axis, we moved down
         # if there's a negative change on the y-axis, we moved up
         # if there's a positive change on the x-axis, we moved right
@@ -58,15 +64,17 @@ class Solution:
                 raise Exception(f'Bad path found. Didn\'t move between {self.path[i]} and {self.path[i + 1]}')
             
             if dy > 0 and prevDir != Direction.DOWN:
-                self.movements.append(Direction.DOWN)
+                self.dirs.append(Direction.DOWN)
             elif dy < 0 and prevDir != Direction.UP:
-                self.movements.append(Direction.UP)
+                self.dirs.append(Direction.UP)
             elif dx > 0 and prevDir != Direction.RIGHT:
-                self.movements.append(Direction.RIGHT)
+                self.dirs.append(Direction.RIGHT)
             elif dx < 0 and prevDir != Direction.LEFT:
-                self.movements.append(Direction.LEFT)
+                self.dirs.append(Direction.LEFT)
 
-        self.movements.append(Direction.DOWN) #path[len - 2] is the last non-victory point, just need to go down again to get victory.
+            prevDir = self.dirs[-1]
+
+        self.dirs.append(Direction.DOWN) #path[len - 2] is the last non-victory point, just need to go down again to get victory.
 
 # -------------------------------------------------------------------------------------------------------------------------- #
 
@@ -86,7 +94,9 @@ class Puzzle:
         self.end_x = np.random.choice(np.arange(0, n))
 
         # total number of solutions 
-        self.num_solutions = -1 # unassigned initially
+        self.solutions = []
+
+        self.searched = False # bool to represent if we have tried to search this puzzle yet 
 
         '''
         - Each path that can get you from the entrance to the exit is a number of direction inputs
@@ -103,18 +113,44 @@ class Puzzle:
 
         self.generate()
 
+    def num_solutions(self):
+        return len(self.solutions)
 
     # Numeric Difficulty = f(num_solutions, avg_nontrivial_path_complexity) = .4 * num_solutions + .6 * avg_nontrivial_path_complexity
-    # This equation will make it so difficutly depends slightly more on how complex the average path is. 
+    # avg path complexity = f(path1, path2, ..., pathn) = [(n * path1) + ((n - 1) * path2) + ... 1 * pathn] / n.
+    # As the equation suggests, paths aren't weighted equally. Humans naturally will likely choose shorter solutions, so those are weighted much heavier than the really long ones.
     # Likely will need to be adjusted based on our own ideas.
+    # If -1.0 returned, it is a trivial puzzle.
     def get_numeric_difficulty(self):
-        pass
+        if not self.searched:
+            raise Exception("Attempted to get difficulty on puzzle that hasn't been searched yet. Ya can't do that.")
+        sol_weight = 0.4
+        path_weight = 0.6
+        i = len(self.solutions)
+        num_sols = self.num_solutions()
 
+        # path complexity = the number of direction changes needed (which is easily found with the movements list in the Solution class)
+        total_path_complexity = 0 #sum of the complexities of each path 
+
+        for solution in self.solutions:
+            if len(solution.dirs) <= 3:
+                print("This is a trivial puzzle. Probably don't want to use it.")
+                return -1.0
+            else:
+                total_path_complexity = i * len(solution.dirs)
+            i -= 1
+        print(self.solutions[0].dirs)
+        avg_path_complexity = total_path_complexity / num_sols
+
+        return sol_weight * num_sols + path_weight * avg_path_complexity
+    
+
+    def add_solution(self, solution: Solution):
+        self.solutions.append(solution)
 
     # 78% chance a tile is ice (0), 15% chance a single tile is snow (1), 2% chance it's a 2x2 island of snow, 5% chance it's an obstacle (2).
     # We can test and change these percentages later.
     def generate(self):
-
         for i in range(self.size):
             for j in range(self.size):
                 # if something has already been assigned, don't try to reassign
@@ -193,11 +229,12 @@ class PuzzleGenerator:
 
 
     # Find ALL non-circular solutions, return if it can be done. Assign the number of solutions and average path complexity (number of movements needed) variables to get idea of difficulty.
-    def attemptToSolve(self, puzzle):
-
+    def attemptToSolve(self, puzzle: Puzzle):
         self.bfs(puzzle)
-        if puzzle.num_solutions >= 1:
+
+        if puzzle.num_solutions() >= 1:
             print(f'puzzle {puzzle_id_counter} is solvable.')
+            print(f'Numeric difficulty: {puzzle.get_numeric_difficulty()}')
             return True
         else:
             print(f'puzzle {puzzle_id_counter} is not solvable.')
@@ -221,8 +258,8 @@ class PuzzleGenerator:
             #if we win, we're done with this path
             if lastPos == (-1, -1):
                 sol = Solution(path)
-                print(sol.movements)
-                print(f'completed path through these coords: {path}')
+                puzzle.add_solution(sol)
+                #print(f'completed path through these coords: {path}')
                 continue
 
             
@@ -257,6 +294,7 @@ class PuzzleGenerator:
                     q.append(newPath)
 
             curIter += 1
+        puzzle.searched = True
             
 
     '''Lots of code duplication here, best to refactor at some point.'''
@@ -338,8 +376,11 @@ class PuzzleGenerator:
             elif puzzle.get(pos[0], i) == 2:
                 return (pos[0], i + 1)
 
-
-        return (pos[0], 0)
+        # so you slide back in the beginning position
+        if (pos[0] == puzzle.begin_x):
+            return (pos[0], -1)
+        else:
+            return (pos[0], 0)
 
     def writePuzzlesToFiles(self):
         for puzzle in self.solvable_puzzles:
