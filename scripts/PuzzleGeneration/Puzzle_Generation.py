@@ -7,9 +7,7 @@
     As of right now, the puzzle generator generates about 100 valid, solvable 10 x 10 puzzles per second.
 
     TODO (for the puzzle generation):
-        - Probably need to make it so you start at bottom and go to top. Shouldn't be too hard to refactor, but could be a bit annoying.
         - Make difficulty calculation more accurate
-        - Encoding/Decoding algorithm. Encoding (i.e. writing to file) happens in this file, Decoding, happens in a C# script called from Unity.
         - Fix whatever bugs may be in the code
         - Refactor huge chunks of repeated code.
     Bonus Todods:
@@ -99,6 +97,8 @@ class Puzzle:
 
         self.searched = False # bool to represent if we have tried to search this puzzle yet 
 
+        self.difficulty = -1.0 #unassigned
+
         '''
         - Each path that can get you from the entrance to the exit is a number of direction inputs
         - This variable is the average number of inputs for all "non-trivial" paths
@@ -115,6 +115,15 @@ class Puzzle:
 
     def num_solutions(self):
         return len(self.solutions)
+    
+
+    def set_searched(self):
+        self.searched = True;
+        if self.num_solutions() == 0:
+            self.difficulty = float('inf')
+        else:
+            self.difficulty = self.get_numeric_difficulty()
+    
 
     # Numeric Difficulty = f(num_solutions, avg_nontrivial_path_complexity) = .4 * num_solutions + .6 * avg_nontrivial_path_complexity
     # avg path complexity = f(path1, path2, ..., pathn) = [(n * path1) + ((n - 1) * path2) + ... 1 * pathn] / n.
@@ -122,10 +131,15 @@ class Puzzle:
     # Likely will need to be adjusted based on our own ideas.
     # If -1.0 returned, it is a trivial puzzle.
     def get_numeric_difficulty(self):
+        # if calculated, return that 
+        if self.difficulty != -1.0:
+            return self.difficulty
+
         if not self.searched:
             raise Exception("Attempted to get difficulty on puzzle that hasn't been searched yet. Ya can't do that.")
-        sol_weight = 0.4
-        path_weight = 0.6
+
+        sol_weight = 0.3
+        path_weight = 0.7
         i = len(self.solutions)
         num_sols = self.num_solutions()
 
@@ -180,6 +194,12 @@ class Puzzle:
         elif x >= self.size or y >= self.size or x < 0 or y < 0:
             raise Exception(f'Indexes for grid are out of range. Max ind: {(self.size - 1, self.size - 1)}, attempted ind: {(x, y)}')
         return self.grid[y, x]
+    
+    def is_trivial(self):
+        return self.difficulty == -1.0
+    
+    def is_possible(self):
+        return self.difficulty != float('inf')
         
 
             
@@ -221,7 +241,7 @@ class PuzzleGenerator:
         pass
 
 
-    def generate(self, puzzle_size):
+    def generate(self, puzzle_size, write: bool):
         global puzzle_id_counter
         while len(self.solvable_puzzles) < self.num_puzzles_to_generate:
             trialPuzzle = Puzzle(puzzle_size, puzzle_id_counter)
@@ -229,20 +249,23 @@ class PuzzleGenerator:
             solvable = self.attemptToSolve(trialPuzzle)
             if solvable:
                 self.solvable_puzzles.append(trialPuzzle)
+        if (write):
+            self.writePuzzlesToFiles()
+            
 
 
 
-    # Find ALL non-circular solutions, return if it can be done. Assign the number of solutions and average path complexity (number of movements needed) variables to get idea of difficulty.
+    # Find ALL non-circular solutions, return if it can be done. Assign the number of 
+    # solutions and average path complexity (number of movements needed) variables to get idea of difficulty.
     def attemptToSolve(self, puzzle: Puzzle):
         self.bfs(puzzle)
 
-        if puzzle.num_solutions() >= 1:
+        if puzzle.is_possible() and not puzzle.is_trivial():
             print(f'puzzle {puzzle_id_counter} is solvable.')
             print(f'Numeric difficulty: {puzzle.get_numeric_difficulty()}')
             print(puzzle)
             print(puzzle.solutions[0].path)
             print(puzzle.solutions[0].dirs)
-
             return True
         else:
             print(f'puzzle {puzzle_id_counter} is not solvable.')
@@ -302,7 +325,7 @@ class PuzzleGenerator:
                     q.append(newPath)
 
             curIter += 1
-        puzzle.searched = True
+        puzzle.set_searched()
             
 
     '''Lots of code duplication here, best to refactor at some point.'''
@@ -387,14 +410,50 @@ class PuzzleGenerator:
             return (-1, -1)
         else:
             return (pos[0], 0)
+        
+
+    def encodePuzzle(self, puzzle: Puzzle, label: int):
+        n = len(puzzle.grid)
+        filepath= "EncodedPuzzles/puzzle" + str(label) + ".ice"
+        f = open(filepath, 'w')
+
+        f.write(str(n) + '\n')
+        for i in range(n):
+            if i == puzzle.end_x:
+                f.write('X')
+            else:
+                f.write('_')
+            if i != n - 1:
+                f.write(' ')
+        f.write('\n')
+        
+        for i in range(n):
+            for j in range(n):
+                if puzzle.grid[i, j] == 0:
+                    f.write('I')
+                elif puzzle.grid[i, j] == 1:
+                    f.write('S')
+                elif puzzle.grid[i, j] == 2:
+                    f.write('B')
+                else:
+                    raise Exception("Something was on the puzzle that was not 0, 1, or 2.")
+                if j != n - 1:
+                    f.write(' ')
+            f.write('\n')
+                
+
+        for i in range(n):
+            if i == puzzle.begin_x:
+                f.write('X')
+            else:
+                f.write('_')
+            if i != n - 1:
+                f.write(' ')
+        f.close()
 
     def writePuzzlesToFiles(self):
-        for puzzle in self.solvable_puzzles:
-            pass
-            # create file 
-            # open file 
-            # write puzzle to file 
-            # close and save file 
-            
-            
+        for i in range(len(self.solvable_puzzles)):
+            self.encodePuzzle(self.solvable_puzzles[i], i)
 
+
+            
