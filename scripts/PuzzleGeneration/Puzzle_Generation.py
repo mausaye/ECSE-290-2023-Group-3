@@ -7,7 +7,6 @@
     As of right now, the puzzle generator generates about 100 valid, solvable 10 x 10 puzzles per second.
 
     TODO (for the puzzle generation):
-        - Probably need to make it so you start at bottom and go to top. Shouldn't be too hard to refactor, but could be a bit annoying.
         - Make difficulty calculation more accurate
         - Encoding/Decoding algorithm. Encoding (i.e. writing to file) happens in this file, Decoding, happens in a C# script called from Unity.
         - Fix whatever bugs may be in the code
@@ -221,7 +220,7 @@ class PuzzleGenerator:
         pass
 
 
-    def generate(self, puzzle_size):
+    def generate(self, puzzle_size, write: bool):
         global puzzle_id_counter
         while len(self.solvable_puzzles) < self.num_puzzles_to_generate:
             trialPuzzle = Puzzle(puzzle_size, puzzle_id_counter)
@@ -229,6 +228,9 @@ class PuzzleGenerator:
             solvable = self.attemptToSolve(trialPuzzle)
             if solvable:
                 self.solvable_puzzles.append(trialPuzzle)
+        if (write):
+            self.writePuzzlesToFiles()
+            
 
 
 
@@ -242,7 +244,6 @@ class PuzzleGenerator:
             print(puzzle)
             print(puzzle.solutions[0].path)
             print(puzzle.solutions[0].dirs)
-
             return True
         else:
             print(f'puzzle {puzzle_id_counter} is not solvable.')
@@ -387,14 +388,50 @@ class PuzzleGenerator:
             return (-1, -1)
         else:
             return (pos[0], 0)
+        
+
+    def encode(self, puzzle: Puzzle, label: int):
+        n = len(puzzle.grid)
+        filepath= "EncodedPuzzles/puzzle" + str(label) + ".ice"
+        f = open(filepath, 'w')
+
+        f.write(str(n) + '\n')
+        for i in range(n):
+            if i == puzzle.end_x:
+                f.write('X')
+            else:
+                f.write('_')
+            if i != n - 1:
+                f.write(' ')
+        f.write('\n')
+        
+        for i in range(n):
+            for j in range(n):
+                if puzzle.grid[i, j] == 0:
+                    f.write('I')
+                elif puzzle.grid[i, j] == 1:
+                    f.write('S')
+                elif puzzle.grid[i, j] == 2:
+                    f.write('B')
+                else:
+                    raise Exception("Something was on the puzzle that was not 0, 1, or 2.")
+                if j != n - 1:
+                    f.write(' ')
+            f.write('\n')
+                
+
+        for i in range(n):
+            if i == puzzle.begin_x:
+                f.write('X')
+            else:
+                f.write('_')
+            if i != n - 1:
+                f.write(' ')
+        f.close()
 
     def writePuzzlesToFiles(self):
-        for puzzle in self.solvable_puzzles:
-            pass
-            # create file 
-            # open file 
-            # write puzzle to file 
-            # close and save file 
-            
-            
+        for i in range(len(self.solvable_puzzles)):
+            self.encode(self.solvable_puzzles[i], i)
 
+
+            

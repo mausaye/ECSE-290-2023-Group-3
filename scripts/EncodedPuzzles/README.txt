@@ -1,1 +1,0 @@
-This is where the solvable puzzles will be placed.
