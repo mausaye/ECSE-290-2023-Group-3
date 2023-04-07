@@ -13,16 +13,6 @@ public class Timer : MonoBehaviour
     void Start()
     {
         timerText = GetComponent<TextMeshProUGUI>();
-        RectTransform rectTransform = timerText.rectTransform;
-
-        float width = timerText.preferredWidth;
-        float height = timerText.preferredHeight;
-
-        rectTransform.anchorMin = new Vector2(1, 1);
-        rectTransform.anchorMax = new Vector2(1, 1);
-        rectTransform.pivot = new Vector2(1, 1);
-
-        rectTransform.anchoredPosition = new Vector3(-width / 2, -height / 2, 0);
 
         gameTime = 0;
         DisplayTime(gameTime);
