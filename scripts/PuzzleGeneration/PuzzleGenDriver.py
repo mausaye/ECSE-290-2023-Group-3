@@ -4,9 +4,6 @@ def main():
     num_puzzles = int(input("How many puzzles to generate"))
     generator = PuzzleGenerator(num_puzzles)
     generator.generate(10, True)
-    #p = Puzzle(5, 0)
-    #print(p)
-    #generator.attemptToSolve(p)
 
 
 
