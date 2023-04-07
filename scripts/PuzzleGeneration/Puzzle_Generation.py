@@ -14,8 +14,8 @@
         - Refactor huge chunks of repeated code.
     Bonus Todods:
         - Visualization of puzzles and their solutions beyond text output 
-
 '''
+
 import numpy as np
 from enum import Enum
 puzzle_id_counter = 0
@@ -75,7 +75,7 @@ class Solution:
 
             prevDir = self.dirs[-1]
 
-        self.dirs.append(Direction.DOWN) #path[len - 2] is the last non-victory point, just need to go down again to get victory.
+        self.dirs.append(Direction.UP) #path[len - 2] is the last non-victory point, just need to go down again to get victory.
 
 # -------------------------------------------------------------------------------------------------------------------------- #
 
@@ -159,9 +159,9 @@ class Puzzle:
 
                     # if we're not on the boundary, also consider generating island 
                     if (i < self.size - 1) and j < (self.size - 1):
-                        tile = int(np.random.choice(np.arange(0, 4), p=[0.78, 0.15, .02, 0.05]))
+                        tile = int(np.random.choice(np.arange(0, 4), p=[0.78, 0.10, .02, 0.10]))
                     else:
-                        tile = np.random.choice(np.arange(0, 3), p=[0.8, 0.15, 0.05]) # probabilities a bit adjusted, but it's fine 
+                        tile = np.random.choice(np.arange(0, 3), p=[0.75, 0.15, 0.10]) # probabilities a bit adjusted, but it's fine 
                     
                     # if 3 chosen, generate 2x2 snow block
                     if tile == 3:
@@ -175,7 +175,9 @@ class Puzzle:
 
     
     def get(self, x: int, y: int):
-        if x >= self.size or y >= self.size or x < 0 or y < 0:
+        if(x == self.begin_x and y == len(self.grid)):
+            return True
+        elif x >= self.size or y >= self.size or x < 0 or y < 0:
             raise Exception(f'Indexes for grid are out of range. Max ind: {(self.size - 1, self.size - 1)}, attempted ind: {(x, y)}')
         return self.grid[y, x]
         
@@ -186,7 +188,7 @@ class Puzzle:
         s = f'The following is puzzle with ID {self.id}\n'
         s += "  "
         for i in range(self.size):
-            if i == self.begin_x:
+            if i == self.end_x:
                 s += "x"
             else:
                 s += "_"
@@ -196,7 +198,7 @@ class Puzzle:
         s += "\n"
         s += "  "
         for i in range(self.size):
-            if i == self.end_x:
+            if i == self.begin_x:
                 s += "x"
             else:
                 s += "_"
@@ -237,6 +239,10 @@ class PuzzleGenerator:
         if puzzle.num_solutions() >= 1:
             print(f'puzzle {puzzle_id_counter} is solvable.')
             print(f'Numeric difficulty: {puzzle.get_numeric_difficulty()}')
+            print(puzzle)
+            print(puzzle.solutions[0].path)
+            print(puzzle.solutions[0].dirs)
+
             return True
         else:
             print(f'puzzle {puzzle_id_counter} is not solvable.')
@@ -247,7 +253,7 @@ class PuzzleGenerator:
         maxIter = 1000 # only look for solutions within 1000 states from beginning 
 
         q = [] #bfs queue 
-        startingPos = (puzzle.begin_x, -1) # start slightly off the grid
+        startingPos = (puzzle.begin_x, len(puzzle.grid)) # start slightly off the grid at bottom
         q.append([startingPos])
         curIter = 0
         
@@ -314,18 +320,16 @@ class PuzzleGenerator:
             elif puzzle.get(pos[0], i)== 2:
                 return (pos[0], i - 1)
 
-        # if here, we can get to other side
-        # if on other side and exit is right below us, then we slide to victory
-        if puzzle.end_x == pos[0]:
-            return (-1, -1)
+        if (pos[0] == puzzle.begin_x):
+            return (pos[0], len(puzzle.grid))
         else:
-            return (pos[0], puzzle.size - 1)
+            return (pos[0], len(puzzle.grid) - 1)
 
 
     def canMoveLeft(self, puzzle: Puzzle, pos):
 
         # if on beginning border, can't be done
-        if pos[1] == -1:
+        if pos[1] == len(puzzle.grid):
             return False
 
         if pos[0] - 1 >= 0 and (puzzle.get(pos[0] - 1, pos[1]) != 2): 
@@ -346,7 +350,7 @@ class PuzzleGenerator:
     def canMoveRight(self, puzzle: Puzzle, pos):
 
         # if on beginning border, can't be done
-        if pos[1] == -1:
+        if pos[1] == len(puzzle.grid):
             return False
 
         # needed: size check on pos for moving left and right
@@ -378,9 +382,9 @@ class PuzzleGenerator:
             elif puzzle.get(pos[0], i) == 2:
                 return (pos[0], i + 1)
 
-        # so you slide back in the beginning position
-        if (pos[0] == puzzle.begin_x):
-            return (pos[0], -1)
+
+        if puzzle.end_x == pos[0]:
+            return (-1, -1)
         else:
             return (pos[0], 0)
 
