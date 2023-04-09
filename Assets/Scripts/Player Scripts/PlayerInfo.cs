@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Mathematics;
+using System;
 
 public enum Direction {
     MOVE_UP,
@@ -13,11 +15,17 @@ public enum Direction {
     IDLE_RIGHT
 }
 
+public enum Tile {
+    NORMAL_GROUND,
+    ICE
+}
+
 //Singleton so the same information is seen everywhere
 public sealed class PlayerInfo {
     public static PlayerInfo instance = null;
     private static readonly object threadLock = new object();
     private Direction mostRecentDirection;
+    private int2 gridPos = new int2(0, 0);
 
 
     private PlayerInfo() {
@@ -91,5 +99,20 @@ public sealed class PlayerInfo {
 
     public Direction getLastDirection() {
         return mostRecentDirection;
+    }
+
+    public void setGridPosition(Vector3 position) {
+        /* 
+            Why -2? I'm not 100% sure, but I think it's because the position of the player
+            is basically stored at the top left (i.e. top left of the head of the sprite).
+            The sprite is basically 2 blocks big, so the '-2' takes care of things.
+            
+
+        */
+        this.gridPos = new int2((int)Math.Floor(position.x), (int)Math.Floor(position.y + 1) - 2);
+    }
+
+    public int2 getGridPosition() {
+        return this.gridPos;
     }
 }

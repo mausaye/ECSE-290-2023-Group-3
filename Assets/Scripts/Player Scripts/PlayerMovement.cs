@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
+using Unity.Mathematics;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -12,25 +14,32 @@ public class PlayerMovement : MonoBehaviour
     //to see which direction is the most "recent" press
     private float prevDeltaX = 0.0f;
     private float prevDeltaY = 0.0f;
+    public Tilemap snowTiles;
+    public Tilemap iceTiles;
+
 
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D> ();
         rb2d.freezeRotation = true;
+
         //for testing the decoder, remove once it's finished
         PuzzleDecoder.decode("Assets/Resources/GoodPuzzles/puzzle0.ice");
+
         
-
-
     }
 
     void Update()
     {
+        //set position in 2d grid.
+        playerInformation.setGridPosition(this.transform.position);
+        Debug.Log(getTileUnderMe());
         //get change in X and Y
         float deltaX = Input.GetAxisRaw("Horizontal") * speed;
         float deltaY = Input.GetAxisRaw("Vertical") * speed;
         Direction lastDir = playerInformation.getLastDirection();
         playerInformation.setLastDirection(prevDeltaX, prevDeltaY, deltaX, deltaY);
+
 
         //only indicate to animator when the direction is actually changed.
         //sending a message each time causes the animation to reset each frame, which is obviously bad.
@@ -54,5 +63,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void triggerAnimator(Direction d) {
         animator.SetTrigger(d.ToString());
+    }
+
+    private Tile getTileUnderMe() {
+        int2 pos = playerInformation.getGridPosition();
+        Vector3Int vecPos = new Vector3Int(pos.x, pos.y, 0);
+        if (iceTiles.HasTile(vecPos)) {
+            return Tile.ICE;
+        }
+        else {
+            return Tile.NORMAL_GROUND;
+        }
     }
 }
