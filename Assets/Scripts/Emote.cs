@@ -16,7 +16,7 @@ public class Emote : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("hello"); 
+        //Debug.Log("hello"); 
         if (Input.GetKeyDown(KeyCode.B))
         {
             button.gameObject.SetActive(true);

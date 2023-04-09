@@ -17,6 +17,11 @@ public class PlayerMovement : MonoBehaviour
     {
         rb2d = GetComponent<Rigidbody2D> ();
         rb2d.freezeRotation = true;
+        //for testing the decoder, remove once it's finished
+        PuzzleDecoder.decode("Assets/Resources/GoodPuzzles/puzzle0.ice");
+        
+
+
     }
 
     void Update()
