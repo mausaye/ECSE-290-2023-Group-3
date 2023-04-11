@@ -14,6 +14,10 @@ public class PlayerMovement : MonoBehaviour
     //to see which direction is the most "recent" press
     private float prevDeltaX = 0.0f;
     private float prevDeltaY = 0.0f;
+
+    private float deltaX;
+    private float deltaY;
+
     public Tilemap snowTiles;
     public Tilemap iceTiles;
 
@@ -33,19 +37,23 @@ public class PlayerMovement : MonoBehaviour
     {
         //set position in 2d grid.
         playerInformation.setGridPosition(this.transform.position);
-        Debug.Log(getTileUnderMe());
-        //get change in X and Y
-        float deltaX = Input.GetAxisRaw("Horizontal") * speed;
-        float deltaY = Input.GetAxisRaw("Vertical") * speed;
-        Direction lastDir = playerInformation.getLastDirection();
-        playerInformation.setLastDirection(prevDeltaX, prevDeltaY, deltaX, deltaY);
+      
+
+       if(getTileUnderMe() != Tile.ICE){
+        
+            //get change in X and Y, but if on ice then should remain unchanged from previous state to constantly move in same direction
+            deltaX = Input.GetAxisRaw("Horizontal") * speed;
+            deltaY = Input.GetAxisRaw("Vertical") * speed;
+            Direction lastDir = playerInformation.getLastDirection();
+            playerInformation.setLastDirection(prevDeltaX, prevDeltaY, deltaX, deltaY);
 
 
-        //only indicate to animator when the direction is actually changed.
-        //sending a message each time causes the animation to reset each frame, which is obviously bad.
-        if (lastDir != playerInformation.getLastDirection())
-            triggerAnimator(playerInformation.getLastDirection());
+            //only indicate to animator when the direction is actually changed.
+            //sending a message each time causes the animation to reset each frame, which is obviously bad.
+            if (lastDir != playerInformation.getLastDirection())
+                triggerAnimator(playerInformation.getLastDirection());
 
+       }
 
         Vector2 delta = new Vector2(deltaX , deltaY);
 
@@ -55,9 +63,10 @@ public class PlayerMovement : MonoBehaviour
         //set position (FPS invariant)
         rb2d.position = rb2d.position + delta * Time.deltaTime;
 
-
         prevDeltaX = deltaX;
         prevDeltaY = deltaY;
+       
+        
     }
 
 
