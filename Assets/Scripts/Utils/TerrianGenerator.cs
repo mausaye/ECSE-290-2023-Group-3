@@ -10,6 +10,7 @@ public class TerrianGenerator : MonoBehaviour
     public Tilemap iceTiles;
     public Tilemap snowTiles; 
     public Tilemap boundaryTiles;
+    public Tilemap inanimateObjectTiles;
     public UnityEngine.Tilemaps.Tile snowTile;
     public UnityEngine.Tilemaps.Tile iceTile;
     public UnityEngine.Tilemaps.Tile inPuzzleBoundaryTile;
@@ -37,11 +38,18 @@ public class TerrianGenerator : MonoBehaviour
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 Vector3Int pos = new Vector3Int(i, j, 0);
-                if (puzzle[i, j] == 'S') {
+                //TODO: Switch this to a switch statement.
+                if (puzzle[j, i] == 'S') {
                     snowTiles.SetTile(pos, snowTile);
                 }
-                else if (puzzle[i, j] == 'B') {
-                    boundaryTiles.SetTile(pos, inPuzzleBoundaryTile);
+                else if (puzzle[j, i] == 'B') {
+                    inanimateObjectTiles.SetTile(pos, inPuzzleBoundaryTile);
+                }
+                else if (puzzle[j, i] == '_') {
+                    inanimateObjectTiles.SetTile(pos, edgeBoundaryTile);
+                }
+                else if (puzzle[j, i] == 'I') {
+                    iceTiles.SetTile(pos, iceTile);
                 }
             }
         }
