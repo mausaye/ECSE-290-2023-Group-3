@@ -27,7 +27,6 @@ public class PlayerMovement : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D> ();
         rb2d.freezeRotation = true;
 
-        //for testing the decoder, remove once it's finished
         PuzzleDecoder.decode("Assets/Resources/GoodPuzzles/puzzle0.ice");
 
         
@@ -38,7 +37,8 @@ public class PlayerMovement : MonoBehaviour
         //set position in 2d grid.
         playerInformation.setGridPosition(this.transform.position);
       
-
+        // TODO: Right now, you can slide on ice diagonally. Allowing this may make puzzles too easy.
+        // This should be changed such that you only side in one direction. Maybe prioritize up/down direction if both a horizontal and vertical press is done.
        if(getTileUnderMe() != Tile.ICE){
         
             //get change in X and Y, but if on ice then should remain unchanged from previous state to constantly move in same direction

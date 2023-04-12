@@ -11,7 +11,9 @@ public static class PuzzleDecoder {
         for (int i = 1; i <= n + 2; i++) {
             string line = rawLines[i];
             int puzzleRow = i - 1;
-            int puzzleCol = 0;
+            puzzle[puzzleRow, 0] = '_';
+            puzzle[puzzleRow, n + 1] = '_';
+            int puzzleCol = 1;
             for (int j = 0; j < line.Length; j++) {
                 if (line[j] != ' ') {
                     puzzle[puzzleRow, puzzleCol] = line[j];
