@@ -5,14 +5,19 @@ using System.IO;
 public static class PuzzleDecoder {
 
     public static char[,] decode(string filepath) {
-        string[] rawLines= File.ReadAllLines(filepath);
+        string[] rawLines = File.ReadAllLines(filepath);
         int n = Convert.ToInt32(rawLines[0]);
         char[,] puzzle = new char[n + 2, n + 2];
+
         for (int i = 1; i <= n + 2; i++) {
             string line = rawLines[i];
             int puzzleRow = i - 1;
-            puzzle[puzzleRow, 0] = '_';
+
+            //edge boundaries 
+            puzzle[puzzleRow, 0] = '_'; 
             puzzle[puzzleRow, n + 1] = '_';
+
+            //When puzzle col is 0, a boundary is placed. 
             int puzzleCol = 1;
             for (int j = 0; j < line.Length; j++) {
                 if (line[j] != ' ') {
@@ -21,12 +26,6 @@ public static class PuzzleDecoder {
                 }
             }
         }   
-        for (int i = 0; i < n + 2; i++) {
-            string test = "";
-            for (int j = 0; j < n + 2; j++) {
-                test += puzzle[i, j] + " ";
-            }
-        }
 
         return puzzle;
     }

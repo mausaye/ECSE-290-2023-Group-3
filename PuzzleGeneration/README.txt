@@ -1,0 +1,1 @@
+Right now, the GeneratePuzzles script is set up to generate 100 15 x 15 puzzles.
