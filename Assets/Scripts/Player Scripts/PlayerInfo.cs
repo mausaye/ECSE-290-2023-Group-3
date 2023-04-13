@@ -41,6 +41,25 @@ public sealed class PlayerInfo {
         }
     }
 
+    public void setLastDirectionAsIdle(Direction d) {
+        switch (d) {
+            case Direction.MOVE_DOWN:
+                mostRecentDirection = Direction.IDLE_DOWN;
+                break;
+            case Direction.MOVE_UP:
+                mostRecentDirection = Direction.IDLE_UP;
+                break;
+            case Direction.MOVE_LEFT:
+                mostRecentDirection = Direction.IDLE_LEFT;
+                break;
+            case Direction.MOVE_RIGHT:
+                mostRecentDirection = Direction.IDLE_RIGHT;
+                break;
+            default:
+                mostRecentDirection = Direction.IDLE_DOWN;
+                break;
+        }
+    }
     //for the sake of making the animation look good. Could probably be simplified a bit.
     public void setLastDirection(float prevDX, float prevDY, float dX, float dY) {
         //idling 

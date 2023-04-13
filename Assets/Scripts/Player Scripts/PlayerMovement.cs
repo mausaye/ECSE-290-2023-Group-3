@@ -55,10 +55,26 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void moveOnIce() {
-        Vector2 delta = new Vector2(prevDeltaX, prevDeltaY);
-        rb2d.position = rb2d.position + delta * Time.deltaTime;
+        //stopped on ice.
+        if (prevDeltaX == 0 && prevDeltaY == 0) {
+            float deltaX = Input.GetAxisRaw("Horizontal") * speed;
+            float deltaY = Input.GetAxisRaw("Vertical") * speed;
+            Vector2 delta = new Vector2(deltaX , deltaY);
+            Debug.Log(delta);
 
-        Vector2 curPos = rb2d.position;
+        }
+        else {
+            Vector2 delta = new Vector2(prevDeltaX, prevDeltaY);
+            rb2d.position = rb2d.position + delta * Time.deltaTime;
+            //Vector2 curPos = rb2d.position;
+        }
+    }
+
+
+    void OnCollisionEnter2D(Collision2D collision) {
+        playerInformation.setLastDirectionAsIdle(playerInformation.getLastDirection()); //halt animation
+        prevDeltaX = 0;
+        prevDeltaY = 0;
     }
 
 
