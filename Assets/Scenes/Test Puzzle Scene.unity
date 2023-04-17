@@ -877,7 +877,10 @@ MonoBehaviour:
   iceTile: {fileID: 11400000, guid: 7a815f4ea9ad2403697d7d8ebe43938c, type: 2}
   inPuzzleBoundaryTile: {fileID: 11400000, guid: 6fe685049dec042338c94bd2faf7564f, type: 2}
   edgeBoundaryTile: {fileID: 11400000, guid: 6fe685049dec042338c94bd2faf7564f, type: 2}
-  difficulty: 1
+  puzzleDifficulties: 010000000200000003000000
+  puzzle1Offset: {x: 0, y: 0}
+  puzzle2Offset: {x: 20, y: 20}
+  puzzle3Offset: {x: 40, y: 40}
 --- !u!156049354 &1737919165
 Grid:
   m_ObjectHideFlags: 0
