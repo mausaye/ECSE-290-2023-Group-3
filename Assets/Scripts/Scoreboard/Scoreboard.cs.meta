@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 9c0f353fdf17341cabdb1225d4aa29ec
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - highScoresHolderTransform: {fileID: 8910772936886988439, guid: 6249d64bd3c4e467094e0bb0292d3c28, type: 3}
+  - scoreboardEntryObject: {fileID: 8646697100046625923, guid: 4be2fe1b16190444f9a5d5a0a0a19d95, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
