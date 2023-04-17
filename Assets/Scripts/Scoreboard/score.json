@@ -1,6 +1,9 @@
 {
     "highScores": [
         {
+            "time": 3
+        },
+        {
             "time": 5
         }
     ]

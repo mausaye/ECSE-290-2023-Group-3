@@ -6,14 +6,14 @@ using System;
 namespace Frosty.Scoreboards{
     public class Scoreboard : MonoBehaviour
     {
-        [SerializeField] private int maxEntries = 5;
+        private static int maxEntries = 5;
         [SerializeField] private Transform highScoresHolderTransform;
         [SerializeField] private GameObject scoreboardEntryObject;
 
         [Header("test")]
         [SerializeField] ScoreboardEntryData testEntryData = new ScoreboardEntryData();
 
-        private string savePath = "./Assets/Scripts/Scoreboard/score.json";
+        private static string savePath = "./Assets/Scripts/Scoreboard/score.json";
         
 
         // Start is called before the first frame update
@@ -30,7 +30,7 @@ namespace Frosty.Scoreboards{
             AddEntry(testEntryData);
         }
 
-        private ScoreboardSaveData GetSavedScores(){
+        public ScoreboardSaveData GetSavedScores(){
             if (!File.Exists(savePath)){
                 File.Create(savePath).Dispose();
                 return new ScoreboardSaveData();
@@ -42,7 +42,7 @@ namespace Frosty.Scoreboards{
             }
         }
 
-        private void SaveScores(ScoreboardSaveData scoreboardSaveData){
+        public void SaveScores(ScoreboardSaveData scoreboardSaveData){
             using (StreamWriter stream = new StreamWriter(savePath)){
                 string json = JsonUtility.ToJson(scoreboardSaveData, true);
 
@@ -50,29 +50,30 @@ namespace Frosty.Scoreboards{
             }
         }
 
-        private void UpdateUI(ScoreboardSaveData saveScores){
-            foreach(Transform child in highScoresHolderTransform){
+        public void UpdateUI(ScoreboardSaveData saveScores){
+            foreach (Transform child in highScoresHolderTransform)
+            {
                 Destroy(child.gameObject);
             }
 
-            foreach(ScoreboardEntryData highscore in saveScores.highScores){
+            foreach (ScoreboardEntryData highscore in saveScores.highScores){
                 Instantiate(scoreboardEntryObject, highScoresHolderTransform).GetComponent<ScoreboardEntryUI>().Init(highscore);
             }
         }
 
         public void AddEntry(ScoreboardEntryData scoreboardEntryData){
             ScoreboardSaveData saveScores = GetSavedScores();
-            bool scoreAdded = false;
 
             for (int i = 0; i < saveScores.highScores.Count; i++){
                 if (scoreboardEntryData.time < saveScores.highScores[i].time){
                     saveScores.highScores.Insert(i, scoreboardEntryData);
-                    scoreAdded = true;
                     break;
                 }
             }
 
-            if (!scoreAdded && saveScores.highScores.Count < maxEntries){
+
+            if (!saveScores.highScores.Contains(scoreboardEntryData) && saveScores.highScores.Count < maxEntries)
+            {
                 saveScores.highScores.Add(scoreboardEntryData);
             }
 

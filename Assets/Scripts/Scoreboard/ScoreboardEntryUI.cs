@@ -9,10 +9,20 @@ namespace Frosty.Scoreboards
 {
     public class ScoreboardEntryUI : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI timeText = null;
+        [SerializeField] private TextMeshProUGUI timeText;
 
         public void Init(ScoreboardEntryData scoreboardEntryData){
-            timeText.text = scoreboardEntryData.time.ToString() + " seconds";
+            int time = scoreboardEntryData.time;
+            float minutes = Mathf.FloorToInt(time / 60);
+            float seconds = Mathf.FloorToInt(time % 60);
+            if (minutes < 1)
+            {
+                timeText.text = string.Format("{0}s", seconds);
+            }
+            else
+            {
+                timeText.text = string.Format("{0}m{1}s", minutes, seconds);
+            }
         }
     }
 }
