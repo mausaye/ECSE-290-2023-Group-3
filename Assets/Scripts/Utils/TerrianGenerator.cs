@@ -39,8 +39,22 @@ public class TerrianGenerator : MonoBehaviour
 
 
     char[,] chooseRandomPuzzle(int difficulty) {
-        //TODO: make folders for various difficultys, choose one appropriately.
-        return PuzzleDecoder.decode("Assets/Resources/GoodPuzzles/puzzle0.ice");
+        // TODO: make it such that we choose a puzzle at random within the folder.
+        // Note that these puzzles really aren't super reflective of easy/medium/hard, they're basically just random ones for the sake of testing.
+        char[,] puzzle;
+        switch (difficulty) {
+            case 1:
+                return PuzzleDecoder.decode("Assets/Resources/GoodPuzzles/easy/sampleeasypuzzle.ice");
+            case 2:
+                return PuzzleDecoder.decode("Assets/Resources/GoodPuzzles/medium/samplemedpuzzle.ice");
+            case 3:
+                return PuzzleDecoder.decode("Assets/Resources/GoodPuzzles/hard/samplehardpuzzle.ice");
+            default:
+                Debug.Log("Could not find puzzle with specified difficulty. Giving you an easy one by default.");
+                return PuzzleDecoder.decode("Assets/Resources/GoodPuzzles/easy/sampleeasypuzzle.ice");
+
+        }
+        return puzzle;
     }
 
     void Start()
