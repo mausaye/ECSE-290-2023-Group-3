@@ -64,6 +64,13 @@ public class PlayerMovement : MonoBehaviour
 
         }
         else {
+            /*
+            to not allow them to slide diagonally. If they're moving in diagonally,
+            restrict them to just the y. Somewhat arbitrary.
+            */
+            if (Math.Abs(prevDeltaX) > 0.01 && Math.Abs(prevDeltaY) > 0.01) {
+                prevDeltaX = 0;
+            }
             Vector2 delta = new Vector2(prevDeltaX, prevDeltaY);
             rb2d.position = rb2d.position + delta * Time.deltaTime;
             //Vector2 curPos = rb2d.position;
