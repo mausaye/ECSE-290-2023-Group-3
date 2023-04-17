@@ -21,7 +21,6 @@ public class Timer : MonoBehaviour
     void DisplayTime(float timeDisplay){
         float minutes = Mathf.FloorToInt(timeDisplay / 60);
         float seconds = Mathf.FloorToInt(timeDisplay % 60);
-
         timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 

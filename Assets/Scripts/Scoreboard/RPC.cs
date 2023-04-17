@@ -1,22 +1,41 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Collections.Generic;
 
 public struct ScoreMessage {
     public int score;
 }
 public class RPC : MonoBehaviour
 {
+
+    private string returnedScoreboard = "UNASSIGNED";
+
     void Start() 
     {
-        StartCoroutine(GetRequest("http://3.19.53.71:5050/"));
+        // Just so we have something to always display
+        fetchInitialScoreboardData();
+    }
+
+    // Send over game time in seconds, also assigns times with updated scoreboard.
+    public void uploadTime(int time) {
         ScoreMessage m = new ScoreMessage();
-        m.score = 100;
+        m.score = time;
         StartCoroutine(PostRequest("http://3.19.53.71:5050/", JsonUtility.ToJson(m)));
     }
 
+    public void fetchInitialScoreboardData() {
+        if (returnedScoreboard == "UNASSIGNED") {
+            StartCoroutine(GetRequest("http://3.19.53.71:5050/"));
+        }
+    }
+
+    public string getTimes() {
+        return returnedScoreboard;
+    }
+
     //from Unity docs
-    IEnumerator GetRequest(string uri) {
+    private IEnumerator GetRequest(string uri) {
         using (UnityWebRequest webRequest = UnityWebRequest.Get(uri)) {
 
             yield return webRequest.SendWebRequest();
@@ -34,12 +53,12 @@ public class RPC : MonoBehaviour
                     Debug.LogError(pages[page] + ": HTTP Error: " + webRequest.error);
                     break;
                 case UnityWebRequest.Result.Success:
-                    Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
+                    this.returnedScoreboard = webRequest.downloadHandler.text;
                     break;
             }
         }
     }
-     IEnumerator PostRequest(string url, string json)
+    private IEnumerator PostRequest(string url, string json)
     {
         var uwr = new UnityWebRequest(url, "POST");
         byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(json);
@@ -56,6 +75,8 @@ public class RPC : MonoBehaviour
         }
         else
         {
+
+            this.returnedScoreboard = uwr.downloadHandler.text;
             Debug.Log("Received: " + uwr.downloadHandler.text);
         }
     }

@@ -1,0 +1,12 @@
+Things needed 
+
+    - Ultra high priority (needed for tomrrow)
+        - Scene layout (i.e. the ability to walk around Bellflower, do the puzzles, etc)
+            - Beginning scene + win scene
+        - Easily send times to server and display times on a scoreboard
+            - Send times as int variable, containing number of seconds. Use the "uploadTime(int time)" function to do this.
+            - Scores come back as a list of ints ordered from greatest to least (i.e. [1,2,3,4,5]). This needs to be converted to minutes/seconds, then rendered on scoreboard.
+        - Fix sliding bug
+            - You are stopped when you are touching a wall. If you are touching a wall and slide in a direction such that you are still touching the wall, you won't get stopped on the next wall intersection (because you were touching a wall the whole time). This needs to be fixed.
+
+
