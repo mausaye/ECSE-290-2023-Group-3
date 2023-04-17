@@ -23,7 +23,8 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
         let scoreToAdd = req.body['score']
-        res.send("your score was " + scoreToAdd);
+        scoreboard.addScore(parseInt(scoreToAdd));
+        res.send(scoreboard.getJSON());
 });
 
 app.listen(port, () => {
