@@ -3,7 +3,8 @@ guid: bd716a502fec24c8ba67dd8aa888d291
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - emotePrefab: {fileID: 7179407695449343514, guid: a9be4068dcb0f4cceac04847dea72ade, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

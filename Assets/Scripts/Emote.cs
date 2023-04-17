@@ -4,38 +4,43 @@ using UnityEngine;
 
 public class Emote : MonoBehaviour
 {
-   
-    public GameObject button;
+    //[SerializeField] private GameObject emotePrefab;
+    public GameObject emote;
     private const float BUTTON_DURATION = 5f;
-    private bool buttonActive = false;
+    private bool buttonActive; 
     private float buttonTimer = 0f;
+    
+
     void Start()
     {
         
-        button.gameObject.SetActive(false);
+        //emote = GameObject.FindWithTag("heart_emote");
+        emote.SetActive(false);
     }
-
-
 
     void Update()
     {
-        float yOffset = 80f;
+        //float yOffset = 80f;
 
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKey(KeyCode.B))
         {
-            Debug.Log("hello");
+            Debug.Log("pressed B"); 
+            emote.SetActive(true);
+            Debug.Log("setActive");
+            //emote.transform.position = transform.position + Vector3.up * yOffset;
             buttonActive = true;
-            button.gameObject.SetActive(true);
-            
-            button.transform.position = transform.position + Vector3.up * yOffset;
             buttonTimer = 0f;
-        }
+            //quyen
+            
+        
+         }
+
         if (buttonActive)
         {
             buttonTimer += Time.deltaTime;
             if (buttonTimer >= BUTTON_DURATION)
             {
-                button.SetActive(false);
+                emote.SetActive(false);
                 buttonActive = false;
                 buttonTimer = 0f;
             }

@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - heart_emote
+  - sad_emote
+  - angry_cloud
+  - happy_cloud
   layers:
   - Default
   - TransparentFX
