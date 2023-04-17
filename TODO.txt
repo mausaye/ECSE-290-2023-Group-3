@@ -8,5 +8,21 @@ Things needed
             - Scores come back as a list of ints ordered from greatest to least (i.e. [1,2,3,4,5]). This needs to be converted to minutes/seconds, then rendered on scoreboard.
         - Fix sliding bug
             - You are stopped when you are touching a wall. If you are touching a wall and slide in a direction such that you are still touching the wall, you won't get stopped on the next wall intersection (because you were touching a wall the whole time). This needs to be fixed.
+        - Music and sound effects. I definitely don't have time to compose something today, so for now, we can just find a random, royalty-free song online that fits the vibe.
+
+    - High priority (needed for final submission, but maybe not tomorrow)
+        - Make it so you can't walk diagonally on ice. This makes the puzzles too easy.
+        - Make it so there's some sort of indicator showing what tile you're over on the puzzles.
+        - Make a way to choose a random puzzle. This isn't hard, just some string manipulation to go into the right directory.
+        - Finish all art, assets, etc
+        - Implement night mode
+        - Tune puzzle difficulty algorithm
+
+    - Medium priority (would be nice, but not crazy important)
+        - 
+
+    - Low priority
+        -
+
 
 
