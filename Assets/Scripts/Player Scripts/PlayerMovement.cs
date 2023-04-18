@@ -18,13 +18,10 @@ public class PlayerMovement : MonoBehaviour
     // To see when the player stops moving on ice
     private Vector2 prevPos; 
     private int frameCount; // check every x frames if position has changed.
-
-
     public Tilemap snowTiles;
     public Tilemap iceTiles;
-
     private RPC rpc;
-
+    private Vector2 delta;
 
 
     void Start()
@@ -48,25 +45,39 @@ public class PlayerMovement : MonoBehaviour
             triggerAnimator(playerInformation.getLastDirection());
 
 
-        Vector2 delta = new Vector2(deltaX , deltaY);
+        delta = new Vector2(deltaX , deltaY);
 
         //set position (FPS invariant)
         rb2d.position = rb2d.position + delta * Time.deltaTime;
 
         prevDeltaX = deltaX;
         prevDeltaY = deltaY;
-
     }
 
     void moveOnIce() {
         //stopped on ice.
-        if (prevDeltaX == 0 && prevDeltaY == 0) {
-            float deltaX = Input.GetAxisRaw("Horizontal") * speed;
-            float deltaY = Input.GetAxisRaw("Vertical") * speed;
-            Vector2 delta = new Vector2(deltaX , deltaY);
+        if (delta.x == 0 && delta.y == 0) {
+            float deltaX = 1.0f * Input.GetAxisRaw("Horizontal") * speed;
+            float deltaY = 1.0f * Input.GetAxisRaw("Vertical") * speed;
+            Direction lastDir = playerInformation.getLastDirection();
+            playerInformation.setLastDirection(prevDeltaX, prevDeltaY, deltaX, deltaY);
 
 
+            //only indicate to animator when the direction is actually changed.
+            //sending a message each time causes the animation to reset each frame, which is obviously bad.
+            if (lastDir != playerInformation.getLastDirection())
+                triggerAnimator(playerInformation.getLastDirection());
+
+
+            delta = new Vector2(deltaX , deltaY);
+
+            //set position (FPS invariant)
+            rb2d.position = rb2d.position + delta * Time.deltaTime;
+
+            prevDeltaX = deltaX;
+            prevDeltaY = deltaY;
         }
+
         else {
             /*
             to not allow them to slide diagonally. If they're moving in diagonally,
@@ -75,9 +86,9 @@ public class PlayerMovement : MonoBehaviour
             if (Math.Abs(prevDeltaX) > 0.01 && Math.Abs(prevDeltaY) > 0.01) {
                 prevDeltaX = 0;
             }
-            Vector2 delta = new Vector2(prevDeltaX, prevDeltaY);
+
+            delta = new Vector2(prevDeltaX, prevDeltaY);
             rb2d.position = rb2d.position + delta * Time.deltaTime;
-            //Vector2 curPos = rb2d.position;
         }
     }
 
@@ -86,11 +97,16 @@ public class PlayerMovement : MonoBehaviour
         playerInformation.setLastDirectionAsIdle(playerInformation.getLastDirection()); //halt animation
         prevDeltaX = 0;
         prevDeltaY = 0;
+        if (getTileUnderMe() == Tile.ICE) {
+
+        }
     }
 
 
     void Update()
     {
+        Debug.Log(prevDeltaX);
+        Debug.Log(prevDeltaY);
         //set position in 2d grid.
         playerInformation.setGridPosition(this.transform.position);
         Tile tile = getTileUnderMe();

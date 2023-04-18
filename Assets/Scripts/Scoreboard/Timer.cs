@@ -16,6 +16,7 @@ public class Timer : MonoBehaviour
     [SerializeField] ScoreboardEntryData entryData = new ScoreboardEntryData();
     //[SerializeField] private Scoreboard scoreboard;
     //[SerializeField] Scoreboard scoreboard = new Scoreboard();
+    [SerializeField] private GameObject player;
 
     public bool endGameCondition = gameTime > 60;
 
@@ -54,8 +55,10 @@ public class Timer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(player.transform.position.y);
         //change gameTime > 5 to game end condition
-        if (gameTime > 10000 && !isAdded) {
+        if (player.transform.position.y > 122 && !isAdded) {
+            
             DisplayFinishTime(gameTime);
             if (!isAdded) {
                 entryData.time = (int)gameTime;
