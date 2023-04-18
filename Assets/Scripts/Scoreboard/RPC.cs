@@ -26,8 +26,7 @@ using System.Collections.Generic;
 
 public class RPC : MonoBehaviour
 {
-
-
+    private string returnedScoreboard;
     // Send over game time in seconds, also assigns times with updated scoreboard.
     public void uploadTime(int time) {
         ScoreMessage m = new ScoreMessage();
@@ -37,11 +36,12 @@ public class RPC : MonoBehaviour
 
     // Return the times as a string in the format [time1, time2, time3, etc]. Sorted in descending order.
     public string getTimes() {
-        return returnedScoreboard;
+        return this.returnedScoreboard;
     }
 
     void Start() 
     {
+        returnedScoreboard = "UNASSIGNED";
         // Just so we have something to always display, fetch on initialization.
         fetchInitialScoreboardData();
     }
@@ -59,7 +59,6 @@ public class RPC : MonoBehaviour
         public int score;
     }
 
-    private string returnedScoreboard = "UNASSIGNED";
 
     private void fetchInitialScoreboardData() {
         if (returnedScoreboard == "UNASSIGNED") {
@@ -111,7 +110,6 @@ public class RPC : MonoBehaviour
         else
         {
             this.returnedScoreboard = uwr.downloadHandler.text;
-            Debug.Log("Received: " + uwr.downloadHandler.text);
         }
     }
 

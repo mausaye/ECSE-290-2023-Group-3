@@ -23,10 +23,13 @@ public class PlayerMovement : MonoBehaviour
     public Tilemap snowTiles;
     public Tilemap iceTiles;
 
+    private RPC rpc;
+
 
 
     void Start()
     {
+        //rpc = this.gameObject.AddComponent(typeof(RPC)) as RPC;
         rb2d = GetComponent<Rigidbody2D> ();
         rb2d.freezeRotation = true;
     }
@@ -52,6 +55,7 @@ public class PlayerMovement : MonoBehaviour
 
         prevDeltaX = deltaX;
         prevDeltaY = deltaY;
+
     }
 
     void moveOnIce() {
@@ -60,7 +64,7 @@ public class PlayerMovement : MonoBehaviour
             float deltaX = Input.GetAxisRaw("Horizontal") * speed;
             float deltaY = Input.GetAxisRaw("Vertical") * speed;
             Vector2 delta = new Vector2(deltaX , deltaY);
-            Debug.Log(delta);
+
 
         }
         else {
