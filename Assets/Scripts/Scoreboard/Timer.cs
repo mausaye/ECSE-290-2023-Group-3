@@ -55,7 +55,7 @@ public class Timer : MonoBehaviour
     void Update()
     {
         //change gameTime > 5 to game end condition
-        if (gameTime > 5 && !isAdded) {
+        if (gameTime > 1000 && !isAdded) {
             DisplayFinishTime(gameTime);
             if (!isAdded) {
                 entryData.time = (int)gameTime;
