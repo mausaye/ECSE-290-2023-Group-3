@@ -144,7 +144,7 @@ public class PlayerMovement : MonoBehaviour {
             return boundaryTiles.HasTile(new Vector3Int(pos.x - 1, pos.y, 0));
         }
         else if (delta.y > 0) {
-            return boundaryTiles.HasTile(new Vector3Int(pos.x, pos.y + 2, 0));
+            return boundaryTiles.HasTile(new Vector3Int(pos.x, pos.y + 1, 0));
         }
         else if (delta.y < 0) {
             return boundaryTiles.HasTile(new Vector3Int(pos.x, pos.y - 1, 0));

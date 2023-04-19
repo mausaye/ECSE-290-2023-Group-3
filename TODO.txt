@@ -1,16 +1,9 @@
 Things needed 
-    - High priority (needed for final submission, but maybe not tomorrow)
-        - Make it so there's some sort of indicator showing what tile you're over on the puzzles. (sorta done, infra set up)
-        - Make a way to choose a random puzzle. This isn't hard, just some string manipulation to go into the right directory.
-        - Finish all art, assets, etc
-        - Implement night mode
-        - Tune puzzle difficulty algorithm
-
-    - Medium priority (would be nice, but not crazy important)
-        - 
-
-    - Low priority
-        -
-
+    - Make it so there's some sort of indicator showing what tile you're over on the puzzles. (sorta done, infra set up)
+    - Finish all art, assets, etc
+    - Implement night mode
+    - Tune puzzle difficulty algorithm
+    - NPC scripts
+    - Final music
 
 
