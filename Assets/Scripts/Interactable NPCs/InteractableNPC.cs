@@ -7,13 +7,12 @@ public abstract class InteractableNPC : MonoBehaviour
 {
     private GameObject player;
     private Vector2 playerPos;
-    private const double RANGE_THRESHOLD = 5.0; //maximum range in which the player is "near" this NPC. 
+    private const double RANGE_THRESHOLD = 3.0; //maximum range in which the player is "near" this NPC. 
 
-    private PlayerInfo playerInformation;
+    private PlayerInfo playerInformation = PlayerInfo.Instance;
     void Start()
     {
         player = GameObject.FindWithTag("Player");
-        
     }
 
     void Update()
@@ -42,15 +41,28 @@ public abstract class InteractableNPC : MonoBehaviour
     private bool playerInRange() {
         Vector2 myPos = transform.position;
         double dist = Math.Sqrt(Math.Pow(playerPos.x - myPos.x, 2) + Math.Pow(playerPos.y - myPos.y, 2));
-        Debug.Log(dist);
         return dist < RANGE_THRESHOLD;
     }
 
-    //TODO. Probably need to do a raycast or something like that. Since the rotation is locked for the sake of the camera,
-    //we might have to base it off of the last direction the player had been moving.
+    //Note that this function is only called if the player is within 3 units. Wouldn't work well otherwise.
     private bool playerFacingMe() {
-        
-        return true;
+        Vector2 myPos = transform.position; 
+        Direction d = playerInformation.getLastDirection();
+
+        //could be one refactored into one giant OR statement.
+        if (playerPos.x > myPos.x && (d == Direction.MOVE_LEFT || d == Direction.IDLE_LEFT)) //if player is to the right
+            return true;
+        else if (playerPos.x < myPos.x && (d == Direction.MOVE_RIGHT || d == Direction.IDLE_RIGHT)) {//if player is to the left
+            return true;
+        }
+        else if (playerPos.y > myPos.y && (d == Direction.MOVE_DOWN || d == Direction.IDLE_DOWN)) { //player is above me 
+            return true;
+        }
+        else if (playerPos.y < myPos.y && (d == Direction.MOVE_UP || d == Direction.IDLE_UP)) { //player is below me 
+            return true;
+        }
+
+        return false;
     }
 
     //TODO. Interact button will probably be space or something, just need to check if that key is pressed.
