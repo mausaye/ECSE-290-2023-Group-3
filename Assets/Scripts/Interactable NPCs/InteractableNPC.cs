@@ -8,6 +8,8 @@ public abstract class InteractableNPC : MonoBehaviour
     private GameObject player;
     private Vector2 playerPos;
     private const double RANGE_THRESHOLD = 5.0; //maximum range in which the player is "near" this NPC. 
+
+    private PlayerInfo playerInformation;
     void Start()
     {
         player = GameObject.FindWithTag("Player");
@@ -40,6 +42,7 @@ public abstract class InteractableNPC : MonoBehaviour
     private bool playerInRange() {
         Vector2 myPos = transform.position;
         double dist = Math.Sqrt(Math.Pow(playerPos.x - myPos.x, 2) + Math.Pow(playerPos.y - myPos.y, 2));
+        Debug.Log(dist);
         return dist < RANGE_THRESHOLD;
     }
 
@@ -52,7 +55,7 @@ public abstract class InteractableNPC : MonoBehaviour
 
     //TODO. Interact button will probably be space or something, just need to check if that key is pressed.
     private bool interactButtonPressed() {
-        return true;
+        return Input.GetKeyDown(KeyCode.Space);
     }
 
     //function defines what the NPC should do/say once the player interacts with them.
