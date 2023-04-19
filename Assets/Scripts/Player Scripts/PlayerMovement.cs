@@ -27,6 +27,7 @@ public class PlayerMovement : MonoBehaviour {
     public Tilemap snowTiles;
     public Tilemap iceTiles;
     public Tilemap boundaryTiles;
+    public Tile tile;
 
 
     void Start() {
@@ -38,8 +39,14 @@ public class PlayerMovement : MonoBehaviour {
 
     void Update() {
         int2 pos = playerInformation.getGridPosition();
+
         //Step 1 of update: Figure out what state we're in
-        Tile tile = getTileUnderMe();
+        tile = getTileUnderMe();
+
+        //could make this only highlight when on a puzzle.
+        highlightTileUnderMe();
+
+
 
         //new deltas
         float deltaX = Input.GetAxisRaw("Horizontal") * speed;
@@ -155,6 +162,20 @@ public class PlayerMovement : MonoBehaviour {
             return boundaryTiles.HasTile(new Vector3Int(pos.x, pos.y - 1, 0));
         }
         return false;
-
     }
+
+    private void highlightTileUnderMe() {
+        int2 pos = playerInformation.getGridPosition();
+        Vector3Int vecPos = new Vector3Int(pos.x, pos.y, 0);
+        switch (tile) {
+            case Tile.ICE:
+                //insert logic to clearly show you're over this tile here.
+                break;
+            case Tile.NORMAL_GROUND:
+                //insert logic to clearly show you're over this tile here.
+                break;
+        }
+    }
+
+
 }
