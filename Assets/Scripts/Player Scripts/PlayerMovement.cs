@@ -5,127 +5,96 @@ using UnityEngine.Tilemaps;
 using Unity.Mathematics;
 using System;
 
-public class PlayerMovement : MonoBehaviour
-{
-    private Rigidbody2D rb2d;
+
+/*
+    Same purpose as the PlayerMovement script, but FSM based. Theoretically, this will make it easier to understand and bugs will be easier to track.
+*/
+public class PlayerMovement : MonoBehaviour {
+    private enum PlayerState {
+        Moving_On_Ground,
+        Stopped_On_Ground,
+        Moving_On_Ice,
+        Stopped_On_Ice,
+    }
+
     public float speed;
     private PlayerInfo playerInformation = PlayerInfo.Instance;
+
+    private PlayerState state;
+    private Rigidbody2D rb2d;
+    private Vector2 delta;
     public Animator animator;
-    
-    //to see which direction is the most "recent" press
-    private float prevDeltaX = 0.0f;
-    private float prevDeltaY = 0.0f;
-    // To see when the player stops moving on ice
-    private Vector2 prevPos; 
-    private int frameCount; // check every x frames if position has changed.
     public Tilemap snowTiles;
     public Tilemap iceTiles;
-    private RPC rpc;
-    private Vector2 delta;
 
 
-    void Start()
-    {
-        //rpc = this.gameObject.AddComponent(typeof(RPC)) as RPC;
+    void Start() {
         rb2d = GetComponent<Rigidbody2D> ();
         rb2d.freezeRotation = true;
+        delta = new Vector2(0.0f, 0.0f);
+
     }
 
-    void moveNormally() {
-        //get change in X and Y, but if on ice then should remain unchanged from previous state to constantly move in same direction
+    void Update() {
+        //Step 1 of update: Figure out what state we're in
+        Tile tile = getTileUnderMe();
+
+        //new deltas
         float deltaX = Input.GetAxisRaw("Horizontal") * speed;
         float deltaY = Input.GetAxisRaw("Vertical") * speed;
-        Direction lastDir = playerInformation.getLastDirection();
-        playerInformation.setLastDirection(prevDeltaX, prevDeltaY, deltaX, deltaY);
-
-
-        //only indicate to animator when the direction is actually changed.
-        //sending a message each time causes the animation to reset each frame, which is obviously bad.
-        if (lastDir != playerInformation.getLastDirection())
-            triggerAnimator(playerInformation.getLastDirection());
-
-
-        delta = new Vector2(deltaX , deltaY);
-
-        //set position (FPS invariant)
-        rb2d.position = rb2d.position + delta * Time.deltaTime;
-
-        prevDeltaX = deltaX;
-        prevDeltaY = deltaY;
-    }
-
-    void moveOnIce() {
-        //stopped on ice.
-        if (delta.x == 0 && delta.y == 0) {
-            float deltaX = 1.0f * Input.GetAxisRaw("Horizontal") * speed;
-            float deltaY = 1.0f * Input.GetAxisRaw("Vertical") * speed;
-            Direction lastDir = playerInformation.getLastDirection();
-            playerInformation.setLastDirection(prevDeltaX, prevDeltaY, deltaX, deltaY);
-
-
-            //only indicate to animator when the direction is actually changed.
-            //sending a message each time causes the animation to reset each frame, which is obviously bad.
-            if (lastDir != playerInformation.getLastDirection())
-                triggerAnimator(playerInformation.getLastDirection());
-
-
-            delta = new Vector2(deltaX , deltaY);
-
-            //set position (FPS invariant)
-            rb2d.position = rb2d.position + delta * Time.deltaTime;
-
-            prevDeltaX = deltaX;
-            prevDeltaY = deltaY;
-        }
-
-        else {
-            /*
-            to not allow them to slide diagonally. If they're moving in diagonally,
-            restrict them to just the y. Somewhat arbitrary.
-            */
-            if (Math.Abs(prevDeltaX) > 0.01 && Math.Abs(prevDeltaY) > 0.01) {
-                prevDeltaX = 0;
-            }
-
-            delta = new Vector2(prevDeltaX, prevDeltaY);
-            rb2d.position = rb2d.position + delta * Time.deltaTime;
-        }
-    }
-
-
-    void OnCollisionEnter2D(Collision2D collision) {
-        playerInformation.setLastDirectionAsIdle(playerInformation.getLastDirection()); //halt animation
-        prevDeltaX = 0;
-        prevDeltaY = 0;
-        if (getTileUnderMe() == Tile.ICE) {
-
-        }
-    }
-
-
-    void Update()
-    {
-        Debug.Log(prevDeltaX);
-        Debug.Log(prevDeltaY);
-        //set position in 2d grid.
+        Vector2 newDelta = new Vector2(deltaX, deltaY);
         playerInformation.setGridPosition(this.transform.position);
-        Tile tile = getTileUnderMe();
-        switch (tile) {
-            case Tile.ICE:
-                moveOnIce();
+        if (tile == Tile.ICE) {
+            // First check is so it isn't repeatedly reassigned.
+            if (state != PlayerState.Stopped_On_Ice && deltaX == 0 && deltaY == 0) {
+                Debug.Log("state change");
+                state = PlayerState.Stopped_On_Ice;
+            }
+            else if (state != PlayerState.Moving_On_Ice && ((deltaX != 0) || (deltaY != 0))) {
+                Debug.Log("state change");
+                state = PlayerState.Moving_On_Ice;
+            }
+        }
+        else if (tile == Tile.NORMAL_GROUND) {
+            if (state != PlayerState.Stopped_On_Ground && deltaX == 0 && deltaY == 0) {
+                Debug.Log("state change: Stopped on normal ground");
+                state = PlayerState.Stopped_On_Ground;
+            }
+            else if ((state != PlayerState.Moving_On_Ground) && ((deltaX != 0) || (deltaY != 0))) {
+                Debug.Log("state change : started moving on ground");
+                state = PlayerState.Moving_On_Ground;
+            }
+        }
+
+
+
+
+        //Step 2 of update: Perform actions based on this new state.
+        switch (state) {
+            case PlayerState.Moving_On_Ground:
+                Direction lastDir = playerInformation.getLastDirection();
+                playerInformation.setLastDirection(delta.x, delta.y, deltaX, deltaY);
+                if (lastDir != playerInformation.getLastDirection())
+                    triggerAnimator(playerInformation.getLastDirection());
+                rb2d.position = rb2d.position + newDelta * Time.deltaTime;
+                delta = newDelta;
                 break;
-            default:
-                moveNormally();
+            case PlayerState.Stopped_On_Ground:
+                lastDir = playerInformation.getLastDirection();
+                playerInformation.setLastDirection(delta.x, delta.y, deltaX, deltaY);
+                if (lastDir != playerInformation.getLastDirection())
+                    triggerAnimator(playerInformation.getLastDirection());
+                rb2d.position = rb2d.position + newDelta * Time.deltaTime;
+                delta = newDelta;
+                break;
+            case PlayerState.Moving_On_Ice:
+                break;
+            case PlayerState.Stopped_On_Ice:
+
                 break;
         }
-        frameCount++;
+        //Debug.Log(state);
     }
-
-
-    private void triggerAnimator(Direction d) {
-        animator.SetTrigger(d.ToString());
-    }
-
     private Tile getTileUnderMe() {
         int2 pos = playerInformation.getGridPosition();
         Vector3Int vecPos = new Vector3Int(pos.x, pos.y, 0);
@@ -135,5 +104,9 @@ public class PlayerMovement : MonoBehaviour
         else {
             return Tile.NORMAL_GROUND;
         }
+    }
+
+    private void triggerAnimator(Direction d) {
+        animator.SetTrigger(d.ToString());
     }
 }

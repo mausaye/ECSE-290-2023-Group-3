@@ -55,7 +55,6 @@ public class Timer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(player.transform.position.y);
         //change gameTime > 5 to game end condition
         if (player.transform.position.y > 122 && !isAdded) {
             
