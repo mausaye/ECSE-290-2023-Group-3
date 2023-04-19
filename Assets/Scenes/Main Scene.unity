@@ -51625,7 +51625,6 @@ GameObject:
   - component: {fileID: 741886011}
   - component: {fileID: 741886015}
   - component: {fileID: 741886017}
-  - component: {fileID: 741886018}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -51781,22 +51780,6 @@ MonoBehaviour:
     time: 0
   player: {fileID: 1464736441}
   endGameCondition: 0
---- !u!114 &741886018
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 741886010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c0f353fdf17341cabdb1225d4aa29ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  highScoresHolderTransform: {fileID: 8910772936886988439, guid: 6249d64bd3c4e467094e0bb0292d3c28, type: 3}
-  scoreboardEntryObject: {fileID: 8646697100046625923, guid: 4be2fe1b16190444f9a5d5a0a0a19d95, type: 3}
-  testEntryData:
-    time: 0
 --- !u!213 &819083042
 Sprite:
   m_ObjectHideFlags: 0
@@ -53525,6 +53508,7 @@ MonoBehaviour:
   animator: {fileID: 1464736448}
   snowTiles: {fileID: 545903162}
   iceTiles: {fileID: 1113914097}
+  boundaryTiles: {fileID: 516104540}
 --- !u!50 &1464736446
 Rigidbody2D:
   serializedVersion: 4
