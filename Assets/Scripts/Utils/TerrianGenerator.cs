@@ -88,10 +88,10 @@ public class TerrianGenerator : MonoBehaviour
                         snowTiles.SetTile(pos + offset, snowTile);
                     }
                     else if (puzzle[j, i] == 'B') {
-                        inanimateObjectTiles.SetTile(pos + offset, inPuzzleBoundaryTile);
+                        boundaryTiles.SetTile(pos + offset, inPuzzleBoundaryTile);
                     }
                     else if (puzzle[j, i] == '_') {
-                        inanimateObjectTiles.SetTile(pos + offset, edgeBoundaryTile);
+                        boundaryTiles.SetTile(pos + offset, edgeBoundaryTile);
                     }
                     else if (puzzle[j, i] == 'I') {
                         iceTiles.SetTile(pos + offset, iceTile);
