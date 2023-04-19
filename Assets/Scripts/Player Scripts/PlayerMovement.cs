@@ -165,14 +165,30 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void highlightTileUnderMe() {
+
+
         int2 pos = playerInformation.getGridPosition();
         Vector3Int vecPos = new Vector3Int(pos.x, pos.y, 0);
+
+
+        //A tile we were just on might have it's color modifiedd and we're no longer on it, so reset those.
+        int[] di = {0, 1, 0, -1, 1, 1, -1, -1};
+        int[] dj = {1, 0, -1, 0, -1, 1, -1, 1};
+        for (int k = 0; k < 8; k++) {
+                Vector3Int adjacentTilePos = new Vector3Int(vecPos.x + di[k], vecPos.y + dj[k]);
+                iceTiles.SetTileFlags(adjacentTilePos, TileFlags.None);
+                snowTiles.SetTileFlags(adjacentTilePos,  TileFlags.None);
+                iceTiles.SetColor(adjacentTilePos, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+                snowTiles.SetColor(adjacentTilePos, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+        }
         switch (tile) {
             case Tile.ICE:
-                //insert logic to clearly show you're over this tile here.
+                iceTiles.SetTileFlags(vecPos, TileFlags.None);
+                iceTiles.SetColor(vecPos, new Color(1.0f, 1.0f, 1.0f, 0.0f));
                 break;
             case Tile.NORMAL_GROUND:
-                //insert logic to clearly show you're over this tile here.
+                snowTiles.SetTileFlags(vecPos, TileFlags.None);
+                snowTiles.SetColor(vecPos, new Color(1.0f, 1.0f, 1.0f, 0.0f));
                 break;
         }
     }
