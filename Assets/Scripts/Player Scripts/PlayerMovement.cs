@@ -48,7 +48,14 @@ public class PlayerMovement : MonoBehaviour {
         playerInformation.setGridPosition(this.transform.position);
         if (tile == Tile.ICE) {
 
-            // If on ice at all, check nearby for boundaries. Set us to stopped on ice if we detect one.
+            if (state == PlayerState.Moving_On_Ice && collidedWithBoundary()) {
+                delta.x = 0;
+                delta.y = 0;
+                Debug.Log("collided");
+            }
+
+            // If moving on ice at all, check nearby for boundaries. Set us to stopped on ice if we detect one.
+            /*
             if (delta.x != 0 || delta.y != 0) {
                 if (collidedWithBoundary()) {
                     delta.x = 0;
@@ -56,6 +63,7 @@ public class PlayerMovement : MonoBehaviour {
                     Debug.Log("collision detected");
                 }
             }
+            */
 
             if (state == PlayerState.Stopped_On_Ice && (deltaX != 0 || deltaY != 0)) {
                 delta = new Vector2(deltaX, deltaY);
@@ -136,6 +144,15 @@ public class PlayerMovement : MonoBehaviour {
         //was moving right. If there's a tile 1 to the right, we've collided.
         if (delta.x > 0) {
             return boundaryTiles.HasTile(new Vector3Int(pos.x + 1, pos.y, 0));
+        }
+        else if (delta.x < 0) {
+            return boundaryTiles.HasTile(new Vector3Int(pos.x - 1, pos.y, 0));
+        }
+        else if (delta.y > 0) {
+            return boundaryTiles.HasTile(new Vector3Int(pos.x, pos.y + 2, 0));
+        }
+        else if (delta.y < 0) {
+            return boundaryTiles.HasTile(new Vector3Int(pos.x, pos.y - 1, 0));
         }
         return false;
 
