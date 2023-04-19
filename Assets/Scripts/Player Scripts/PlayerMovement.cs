@@ -38,39 +38,26 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     void Update() {
+        //Step 1 of update: Figure out what state we're in, get info for next frame.
         int2 pos = playerInformation.getGridPosition();
 
-        //Step 1 of update: Figure out what state we're in
         tile = getTileUnderMe();
 
         //could make this only highlight when on a puzzle.
         highlightTileUnderMe();
-
-
 
         //new deltas
         float deltaX = Input.GetAxisRaw("Horizontal") * speed;
         float deltaY = Input.GetAxisRaw("Vertical") * speed;
         Vector2 newDelta = new Vector2(deltaX, deltaY);
         playerInformation.setGridPosition(this.transform.position);
+
         if (tile == Tile.ICE) {
 
             if (state == PlayerState.Moving_On_Ice && collidedWithBoundary()) {
                 delta.x = 0;
                 delta.y = 0;
-                Debug.Log("collided");
             }
-
-            // If moving on ice at all, check nearby for boundaries. Set us to stopped on ice if we detect one.
-            /*
-            if (delta.x != 0 || delta.y != 0) {
-                if (collidedWithBoundary()) {
-                    delta.x = 0;
-                    delta.y = 0;
-                    Debug.Log("collision detected");
-                }
-            }
-            */
 
             if (state == PlayerState.Stopped_On_Ice && (deltaX != 0 || deltaY != 0)) {
                 delta = new Vector2(deltaX, deltaY);
@@ -99,7 +86,7 @@ public class PlayerMovement : MonoBehaviour {
         }
 
 
-
+        /* --------------------------------------------------------- */
 
         //Step 2 of update: Perform actions based on this new state.
         switch (state) {
@@ -152,6 +139,7 @@ public class PlayerMovement : MonoBehaviour {
         if (delta.x > 0) {
             return boundaryTiles.HasTile(new Vector3Int(pos.x + 1, pos.y, 0));
         }
+        //same concept for the rest.
         else if (delta.x < 0) {
             return boundaryTiles.HasTile(new Vector3Int(pos.x - 1, pos.y, 0));
         }
@@ -165,22 +153,12 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void highlightTileUnderMe() {
-
-
         int2 pos = playerInformation.getGridPosition();
-        Vector3Int vecPos = new Vector3Int(pos.x, pos.y, 0);
-
+        Vector3Int vecPos = new Vector3Int(pos.x, pos.y, 0); //position must be a 3d vec, and everything is on 0.
 
         //A tile we were just on might have it's color modifiedd and we're no longer on it, so reset those.
-        int[] di = {0, 1, 0, -1, 1, 1, -1, -1};
-        int[] dj = {1, 0, -1, 0, -1, 1, -1, 1};
-        for (int k = 0; k < 8; k++) {
-                Vector3Int adjacentTilePos = new Vector3Int(vecPos.x + di[k], vecPos.y + dj[k]);
-                iceTiles.SetTileFlags(adjacentTilePos, TileFlags.None);
-                snowTiles.SetTileFlags(adjacentTilePos,  TileFlags.None);
-                iceTiles.SetColor(adjacentTilePos, new Color(1.0f, 1.0f, 1.0f, 1.0f));
-                snowTiles.SetColor(adjacentTilePos, new Color(1.0f, 1.0f, 1.0f, 1.0f));
-        }
+        resetSurroundingTiles(vecPos);
+
         switch (tile) {
             case Tile.ICE:
                 iceTiles.SetTileFlags(vecPos, TileFlags.None);
@@ -193,5 +171,15 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
-
+    private void resetSurroundingTiles(Vector3Int vecPos) {
+        int[] di = {0, 1, 0, -1, 1, 1, -1, -1};
+        int[] dj = {1, 0, -1, 0, -1, 1, -1, 1};
+        for (int k = 0; k < 8; k++) {
+                Vector3Int adjacentTilePos = new Vector3Int(vecPos.x + di[k], vecPos.y + dj[k]);
+                iceTiles.SetTileFlags(adjacentTilePos, TileFlags.None);
+                snowTiles.SetTileFlags(adjacentTilePos,  TileFlags.None);
+                iceTiles.SetColor(adjacentTilePos, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+                snowTiles.SetColor(adjacentTilePos, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+        }
+    }
 }

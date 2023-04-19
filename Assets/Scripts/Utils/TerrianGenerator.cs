@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System;
-
+using System.IO;
 
 /* 
     HOW TO USE: Please read!
@@ -37,24 +37,36 @@ public class TerrianGenerator : MonoBehaviour
 
     private List<Vector2Int> offsets;
 
+    private string chooseRandomPuzzlePathInDirectory(string dir_path) {
+        DirectoryInfo d = new DirectoryInfo(dir_path);
+        FileInfo[] files = d.GetFiles("*.ice");
+        int numFiles = files.Length;
 
-    char[,] chooseRandomPuzzle(int difficulty) {
-        // TODO: make it such that we choose a puzzle at random within the folder.
-        // Note that these puzzles really aren't super reflective of easy/medium/hard, they're basically just random ones for the sake of testing.
-        char[,] puzzle;
+        System.Random r = new System.Random();
+        int randInd = r.Next(0, numFiles);
+        FileInfo file = files[randInd];
+
+        return dir_path + file.Name;
+    }
+
+    private char[,] chooseRandomPuzzle(int difficulty) {
+        string path;
         switch (difficulty) {
             case 1:
-                return PuzzleDecoder.decode("Assets/Resources/GoodPuzzles/easy/sampleeasypuzzle.ice");
+                path = chooseRandomPuzzlePathInDirectory("Assets/Resources/GoodPuzzles/easy/");
+                break;
             case 2:
-                return PuzzleDecoder.decode("Assets/Resources/GoodPuzzles/medium/samplemedpuzzle.ice");
+                path = chooseRandomPuzzlePathInDirectory("Assets/Resources/GoodPuzzles/medium/");
+                break;
             case 3:
-                return PuzzleDecoder.decode("Assets/Resources/GoodPuzzles/hard/samplehardpuzzle.ice");
+                path = chooseRandomPuzzlePathInDirectory("Assets/Resources/GoodPuzzles/hard/");
+                break;
             default:
                 Debug.Log("Could not find puzzle with specified difficulty. Giving you an easy one by default.");
-                return PuzzleDecoder.decode("Assets/Resources/GoodPuzzles/easy/sampleeasypuzzle.ice");
-
+                path = chooseRandomPuzzlePathInDirectory("Assets/Resources/GoodPuzzles/easy/");
+                break;
         }
-        return puzzle;
+        return PuzzleDecoder.decode(path);
     }
 
     void Start()
@@ -100,7 +112,6 @@ public class TerrianGenerator : MonoBehaviour
             }
         }
     }
-
     void Update()
     {
 
