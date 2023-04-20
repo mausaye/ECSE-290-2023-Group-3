@@ -13,10 +13,8 @@ public class Timer : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private GameObject panel;
     [SerializeField] private TextMeshProUGUI finishTimeText;
-    [SerializeField] ScoreboardEntryData entryData = new ScoreboardEntryData();
-    //[SerializeField] private Scoreboard scoreboard;
-    //[SerializeField] Scoreboard scoreboard = new Scoreboard();
     [SerializeField] private GameObject player;
+    private RPC rpc;
 
     public bool endGameCondition = gameTime > 60;
 
@@ -24,6 +22,7 @@ public class Timer : MonoBehaviour
     void Start()
     {
         gameTime = 0;
+        rpc = this.gameObject.AddComponent(typeof(RPC)) as RPC;
         DisplayTime(gameTime);
     }
 
@@ -56,21 +55,17 @@ public class Timer : MonoBehaviour
     void Update()
     {
         //change gameTime > 5 to game end condition
-        if (player.transform.position.y > 122 && !isAdded) {
-            
-            DisplayFinishTime(gameTime);
+        if (player.transform.position.y > 122 && !isAdded)
+        {
+                DisplayFinishTime(gameTime);
             if (!isAdded) {
-                entryData.time = (int)gameTime;
-                Scoreboard scoreboard = new Scoreboard();
-                scoreboard.AddEntry(entryData);
+                rpc.UploadTime((int)gameTime);
                 isAdded = true;
             }
         }
         else {
             gameTime += Time.deltaTime;
             DisplayTime(gameTime);
-
-            
         }
     }
 }

@@ -1,89 +1,74 @@
 using UnityEngine;
 using System.IO;
 using System;
+using System.Collections;
+using TMPro;
 
 
 namespace Frosty.Scoreboards{
     public class Scoreboard : MonoBehaviour
     {
-        private static int maxEntries = 5;
-        [SerializeField] private Transform highScoresHolderTransform;
-        [SerializeField] private GameObject scoreboardEntryObject;
-
-        [Header("test")]
-        [SerializeField] ScoreboardEntryData testEntryData = new ScoreboardEntryData();
-
-        private static string savePath = "./Assets/Scripts/Scoreboard/score.json";
-        
+        private RPC rpc;
+        private int[] top5Times = new int[5];
+        [SerializeField] private TextMeshProUGUI time1;
+        [SerializeField] private TextMeshProUGUI time2;
+        [SerializeField] private TextMeshProUGUI time3;
+        [SerializeField] private TextMeshProUGUI time4;
+        [SerializeField] private TextMeshProUGUI time5;        
 
         // Start is called before the first frame update
         void Start()
         {
-            ScoreboardSaveData saveScores = GetSavedScores();
-            SaveScores(saveScores);
-            UpdateUI(saveScores);
+            rpc = this.gameObject.AddComponent(typeof(RPC)) as RPC;
+            GetScoreFromServer((top5Times) => {
+                Debug.Log(top5Times);
+                this.top5Times = top5Times;
+
+                // This code will be executed once the top5Times array has been processed
+                UpdateUI();
+            });
         }
 
-        //Test purpose. Delete later
-        [ContextMenu("Add Test Entry")]
-        public void AddTestEntry(){
-            AddEntry(testEntryData);
-        }
-
-        public ScoreboardSaveData GetSavedScores(){
-            if (!File.Exists(savePath)){
-                File.Create(savePath).Dispose();
-                return new ScoreboardSaveData();
-            }
-            using (StreamReader stream = new StreamReader(savePath)){
-                string json = stream.ReadToEnd();
-
-                return JsonUtility.FromJson<ScoreboardSaveData>(json);
-            }
-        }
-
-        public void SaveScores(ScoreboardSaveData scoreboardSaveData){
-            using (StreamWriter stream = new StreamWriter(savePath)){
-                string json = JsonUtility.ToJson(scoreboardSaveData, true);
-
-                stream.Write(json);
-            }
-        }
-
-        public void UpdateUI(ScoreboardSaveData saveScores){
-            foreach (Transform child in highScoresHolderTransform)
+        public void GetScoreFromServer(Action<int[]> callback)
+        {
+            rpc.GetTimes((times) =>
             {
-                Destroy(child.gameObject);
-            }
+                times = times.Trim('[', ']');
+                string[] strArray = times.Split(',');
 
-            foreach (ScoreboardEntryData highscore in saveScores.highScores){
-                Instantiate(scoreboardEntryObject, highScoresHolderTransform).GetComponent<ScoreboardEntryUI>().Init(highscore);
-            }
-        }
-
-        public void AddEntry(ScoreboardEntryData scoreboardEntryData){
-            ScoreboardSaveData saveScores = GetSavedScores();
-
-            for (int i = 0; i < saveScores.highScores.Count; i++){
-                if (scoreboardEntryData.time < saveScores.highScores[i].time){
-                    saveScores.highScores.Insert(i, scoreboardEntryData);
-                    break;
+                for (int i = 0; i < this.top5Times.Length; i++)
+                {
+                    this.top5Times[i] = int.Parse(strArray[i]);
                 }
-            }
 
+                callback(this.top5Times);
+            });
+        }
 
-            if (!saveScores.highScores.Contains(scoreboardEntryData) && saveScores.highScores.Count < maxEntries)
+        public void UpdateUI()
+        {
+            time1.text = this.FormatTime(this.top5Times[0]);
+            time2.text = this.FormatTime(this.top5Times[1]);
+            time3.text = this.FormatTime(this.top5Times[2]);
+            time4.text = this.FormatTime(this.top5Times[3]);
+            time5.text = this.FormatTime(this.top5Times[4]);
+        }
+
+        private string FormatTime(int time)
+        {
+            float minutes = Mathf.FloorToInt(time / 60);
+            float seconds = Mathf.FloorToInt(time % 60);
+            string formatedTime;
+
+            if (minutes < 1)
             {
-                saveScores.highScores.Add(scoreboardEntryData);
+                formatedTime = string.Format("{0}s", seconds);
             }
-
-            if (saveScores.highScores.Count > maxEntries){
-                saveScores.highScores.RemoveRange(maxEntries, saveScores.highScores.Count - maxEntries);
+            else
+            {
+                formatedTime = string.Format("{0}m{1}s", minutes, seconds);
             }
-
-            UpdateUI(saveScores);
-            SaveScores(saveScores);
-
+            return formatedTime;
         }
     }
 }

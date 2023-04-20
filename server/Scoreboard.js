@@ -35,11 +35,21 @@ Scoreboard.prototype.addScore = function(score) {
             data.push(this.q.peek());
             this.q.pop();
         }
+
         for (var i = 0; i < data.length - 1; i++) {
-            this.q.push(data[i], -1 * data[i]);
+            this.q.push(data[i], data[i]);
+        }
+
+        if (score < data[data.length - 1]){
+            this.q.push(score, score);
+        }
+        else{
+            this.q.push(data[data.length - 1], data[data.length - 1])
         }
     }
-    this.q.push(score, -1 * score);
+    else{
+        this.q.push(score, score);
+    }
 }
 
 Scoreboard.prototype.getJSON = function() {
@@ -51,7 +61,7 @@ Scoreboard.prototype.getJSON = function() {
     }
 
     for (var i = 0; i < data.length; i++) {
-        this.q.push(data[i], -1 * data[i]);
+        this.q.push(data[i], data[i]);
     }
     return JSON.stringify(data);
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 /*
     HOW TO USE: PLEASE READ!
@@ -27,30 +28,38 @@ using System.Collections.Generic;
 public class RPC : MonoBehaviour
 {
     private string returnedScoreboard;
+
+    // production uri
+    private readonly string uri = "http://3.19.53.71:5050/";
+
+    // local uri
+    //private readonly string uri = "http://localhost:5050/";
+
     // Send over game time in seconds, also assigns times with updated scoreboard.
-    public void uploadTime(int time) {
+    public void UploadTime(int time) {
         ScoreMessage m = new ScoreMessage();
         m.score = time;
-        StartCoroutine(PostRequest("http://3.19.53.71:5050/", JsonUtility.ToJson(m)));
+        StartCoroutine(PostRequest(uri, JsonUtility.ToJson(m)));
     }
 
-    // Return the times as a string in the format [time1, time2, time3, etc]. Sorted in descending order.
-    public string getTimes() {
+    public string GetTimes(Action<string> callback)
+    {
+        StartCoroutine(GetRequest(uri, (retrivedScoreboard) =>
+        {
+            this.returnedScoreboard = retrivedScoreboard;
+            callback(this.returnedScoreboard);
+        }));
+
+        
+
         return this.returnedScoreboard;
     }
 
     void Start() 
     {
-        returnedScoreboard = "UNASSIGNED";
         // Just so we have something to always display, fetch on initialization.
-        fetchInitialScoreboardData();
+        GetTimes((times) => Debug.Log(times));
     }
-
-
-
-
-
-
 
     /* -- Internal stuff. Don't worry about this. -- */
 
@@ -59,15 +68,8 @@ public class RPC : MonoBehaviour
         public int score;
     }
 
-
-    private void fetchInitialScoreboardData() {
-        if (returnedScoreboard == "UNASSIGNED") {
-            StartCoroutine(GetRequest("http://3.19.53.71:5050/"));
-        }
-    }
-
     //edited from Unity docs.
-    private IEnumerator GetRequest(string uri) {
+    private IEnumerator GetRequest(string uri, Action<string> callback) {
         using (UnityWebRequest webRequest = UnityWebRequest.Get(uri)) {
 
             yield return webRequest.SendWebRequest();
@@ -89,30 +91,31 @@ public class RPC : MonoBehaviour
                     break;
             }
         }
+
+        callback(this.returnedScoreboard);
     }
 
     //also edited from Unity docs.
-    private IEnumerator PostRequest(string url, string json)
+    private IEnumerator PostRequest(string uri, string json)
     {
-        var uwr = new UnityWebRequest(url, "POST");
-        byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(json);
-        uwr.uploadHandler = (UploadHandler)new UploadHandlerRaw(jsonToSend);
-        uwr.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-        uwr.SetRequestHeader("Content-Type", "application/json");
-
-        //Send the request then wait here until it returns
-        yield return uwr.SendWebRequest();
-
-        if (uwr.isNetworkError)
+        using (UnityWebRequest webRequest = UnityWebRequest.Post(uri, json))
         {
-            Debug.Log("Error While Sending: " + uwr.error);
-        }
-        else
-        {
-            this.returnedScoreboard = uwr.downloadHandler.text;
+            byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(json);
+            webRequest.uploadHandler = (UploadHandler)new UploadHandlerRaw(jsonToSend);
+            webRequest.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+
+            //Send the request then wait here until it returns
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.isNetworkError)
+            {
+                Debug.Log("Error While Sending: " + webRequest.error);
+            }
+            else
+            {
+                this.returnedScoreboard = webRequest.downloadHandler.text;
+            }
         }
     }
-
-    
-
 }
