@@ -8,6 +8,8 @@ TagManager:
   - sad_emote
   - angry_cloud
   - happy_cloud
+  - Textbox
+  - Dialogue Text
   layers:
   - Default
   - TransparentFX
