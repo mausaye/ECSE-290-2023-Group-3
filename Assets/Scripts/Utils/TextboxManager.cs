@@ -1,15 +1,16 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class TextboxManager : MonoBehaviour 
 {
     private static GameObject textbox;
-    private static TextMeshProUGUI dialogueText;
+    private static Text dialogueText;
     private static bool visible = false;
 
     void Start() {
         textbox = GameObject.FindWithTag("Textbox");
-        dialogueText = Object.FindObjectOfType<TextMeshProUGUI>();
+        dialogueText = GetComponentInChildren<Text>();
         textbox.transform.localScale = new Vector3(0, 0, 0);
     }
 
