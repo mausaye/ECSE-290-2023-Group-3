@@ -12,6 +12,7 @@ public class TextboxManager : MonoBehaviour
         textbox = GameObject.FindWithTag("Textbox");
         dialogueText = GetComponentInChildren<Text>();
         textbox.transform.localScale = new Vector3(0, 0, 0);
+        dialogueText.fontSize = 52;
     }
 
     void Update() {
@@ -28,6 +29,7 @@ public class TextboxManager : MonoBehaviour
 
     public static void setText(string newText) {
         dialogueText.text = newText;
+        //dialogueText.transform.localPosition = new Vector3(0, -175, 0);
     }
 
     public static void removeTextbox() {
