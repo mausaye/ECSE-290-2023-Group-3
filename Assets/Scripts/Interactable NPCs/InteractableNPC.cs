@@ -8,8 +8,10 @@ public abstract class InteractableNPC : MonoBehaviour
     private GameObject player;
     private Vector2 playerPos;
     private const double RANGE_THRESHOLD = 3.0; //maximum range in which the player is "near" this NPC. 
+    public Canvas canvas;
 
-    private PlayerInfo playerInformation = PlayerInfo.Instance;
+    protected PlayerInfo playerInfo = PlayerInfo.Instance;
+
     void Start()
     {
         player = GameObject.FindWithTag("Player");
@@ -20,14 +22,12 @@ public abstract class InteractableNPC : MonoBehaviour
         playerPos = player.transform.position;
         //if the player is close and facing me, there should be some indicator that they can interact with me
         if (playerInteractionPossible()) {
-            //Insert logic indicator here.
 
             //if the interaction can happen and they press enter, they're trying to start an interaction.
             if (interactButtonPressed()) {
                 onInteraction();
             }
         }
-
     }
 
     private bool playerInteractionPossible() {
@@ -47,7 +47,7 @@ public abstract class InteractableNPC : MonoBehaviour
     //Note that this function is only called if the player is within 3 units. Wouldn't work well otherwise.
     private bool playerFacingMe() {
         Vector2 myPos = transform.position; 
-        Direction d = playerInformation.getLastDirection();
+        Direction d = playerInfo.getLastDirection();
 
         //could be one refactored into one giant OR statement.
         if (playerPos.x > myPos.x && (d == Direction.MOVE_LEFT || d == Direction.IDLE_LEFT)) //if player is to the right
@@ -65,7 +65,21 @@ public abstract class InteractableNPC : MonoBehaviour
         return false;
     }
 
-    //TODO. Interact button will probably be space or something, just need to check if that key is pressed.
+    protected void convo(string[] text, ref int textInd) {
+        if (textInd == 0) { // box not up yet 
+            playerInfo.setConvoStatus(true);
+            TextboxManager.createTextbox(text[textInd++]);
+        }
+        else if (textInd < text.Length) { // if there is still stuff to say
+            TextboxManager.setText(text[textInd++]);
+        }
+        else { // nothing left to say
+            textInd = 0;
+            playerInfo.setConvoStatus(false);
+            TextboxManager.removeTextbox();
+        }
+    }
+
     private bool interactButtonPressed() {
         return Input.GetKeyDown(KeyCode.Space);
     }

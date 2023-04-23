@@ -26,6 +26,7 @@ public sealed class PlayerInfo {
     private static readonly object threadLock = new object();
     private Direction mostRecentDirection;
     private int2 gridPos = new int2(0, 0);
+    private bool inConversation = false;
 
 
     private PlayerInfo() {
@@ -39,6 +40,14 @@ public sealed class PlayerInfo {
                 return instance;
             }
         }
+    }
+
+    public void setConvoStatus(bool inConvo) {
+        inConversation = inConvo;
+    }
+
+    public bool isInConvo() {
+        return inConversation;
     }
 
     public void setLastDirectionAsIdle(Direction d) {

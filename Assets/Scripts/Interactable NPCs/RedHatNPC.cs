@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class RedHatNPC : InteractableNPC
 {
+    int textInd = 0;
     public override void onInteraction() {
-        Debug.Log("interaction successful");
+        convo(new string[] {"Yo,", "wassup"}, ref textInd);
     }
 }

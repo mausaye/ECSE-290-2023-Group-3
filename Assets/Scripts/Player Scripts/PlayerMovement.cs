@@ -46,6 +46,10 @@ public class PlayerMovement : MonoBehaviour {
         //could make this only highlight when on a puzzle.
         highlightTileUnderMe();
 
+        if (playerInformation.isInConvo()) {
+            return;
+        }
+
         //new deltas
         float deltaX = Input.GetAxisRaw("Horizontal") * speed;
         float deltaY = Input.GetAxisRaw("Vertical") * speed;
