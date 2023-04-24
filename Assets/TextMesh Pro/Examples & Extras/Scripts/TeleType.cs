@@ -8,11 +8,13 @@ namespace TMPro.Examples
     {
         private string[] labels = new string[]
         {
-            "This is the Dead Week of CWRU",
-            "You are awaken by your phone buzzing",
-            "You crawl out of bed to reach it",
-            "Your friends ask you to go to KSL Library ASAP to finish your Game Design Project", 
-            "You have to hurry now! "
+            "It is currently finals week at CWRU...",
+            "You are awaken by your phone buzzing...",
+            "You crawl out of bed to reach it.",
+            "Your game design group had scheduled a meeting for this morning, but you overslept.",
+            "You need to get to Kelvin Smith Library ASAP to finish your Game Design Project!", 
+            "You have to hurry now!",
+            "It snowed 8 inches last night... be careful!"
         };
 
         private TMP_Text m_textMeshPro;

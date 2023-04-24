@@ -55,7 +55,7 @@ public class Timer : MonoBehaviour
     void Update()
     {
         //change gameTime > 5 to game end condition
-        if (player.transform.position.y > 122 && !isAdded)
+        if (player.transform.position.y > 250 && !isAdded)
         {
                 DisplayFinishTime(gameTime);
             if (!isAdded) {
