@@ -13,6 +13,7 @@
 import numpy as np
 from enum import Enum
 puzzle_id_counter = 0
+min_solution_length = 11
 
 
 # -------------------------------------------------------------------------------------------------------------------------- #
@@ -141,7 +142,7 @@ class Puzzle:
         total_path_complexity = 0 
 
         for solution in self.solutions:
-            if len(solution.dirs) <= 3:
+            if len(solution.dirs) <= min_solution_length:
                 #print("This is a trivial puzzle. Probably don't want to use it.")
                 return -1.0
             else:
@@ -166,9 +167,9 @@ class Puzzle:
 
                     # if we're not on the boundary, also consider generating island 
                     if (i < self.size - 1) and j < (self.size - 1):
-                        tile = int(np.random.choice(np.arange(0, 4), p=[0.78, 0.10, .02, 0.10]))
+                        tile = int(np.random.choice(np.arange(0, 4), p=[0.90, 0.01, .01, 0.08]))
                     else:
-                        tile = np.random.choice(np.arange(0, 3), p=[0.75, 0.15, 0.10]) # probabilities a bit adjusted, but it's fine 
+                        tile = np.random.choice(np.arange(0, 3), p=[0.90, 0.02, 0.08]) # probabilities a bit adjusted, but it's fine 
                     
                     # if 3 chosen, generate 2x2 snow block
                     if tile == 3:
@@ -263,7 +264,7 @@ class PuzzleGenerator:
     
 
     def bfs(self, puzzle: Puzzle):
-        maxIter = 1000 # only look for solutions within 1000 states from beginning. Anything longer isn't reasonable for a human to do.
+        maxIter = 1500 # only look for solutions within 1000 states from beginning. Anything longer isn't reasonable for a human to do.
 
         q = [] #bfs queue 
         startingPos = (puzzle.begin_x, len(puzzle.grid)) # start slightly off the grid at bottom

@@ -94,7 +94,8 @@ public class TerrianGenerator : MonoBehaviour
             int n = (int)Math.Sqrt(puzzle.Length); //because C# is stupid, Length = n * n.
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
-                    Vector3Int pos = new Vector3Int(i, j, 0);
+                    Vector3Int pos = new Vector3Int(i, n - 1 - j, 0);
+                    Debug.Log(String.Format("{0}, {1}", i, j));
                     //TODO: Switch this to a switch statement.
                     if (puzzle[j, i] == 'S') {
                         snowTiles.SetTile(pos + offset, snowTile);
