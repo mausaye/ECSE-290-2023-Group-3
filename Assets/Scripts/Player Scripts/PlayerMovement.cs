@@ -29,6 +29,8 @@ public class PlayerMovement : MonoBehaviour {
     public Tilemap boundaryTiles;
     public Tile tile;
 
+    private const float tileShade = 0.6f; //opacity % for the tile you're under.
+
 
     void Start() {
         rb2d = GetComponent<Rigidbody2D> ();
@@ -166,11 +168,11 @@ public class PlayerMovement : MonoBehaviour {
         switch (tile) {
             case Tile.ICE:
                 iceTiles.SetTileFlags(vecPos, TileFlags.None);
-                iceTiles.SetColor(vecPos, new Color(1.0f, 1.0f, 1.0f, 0.0f));
+                iceTiles.SetColor(vecPos, new Color(1.0f, 1.0f, 1.0f, tileShade));
                 break;
             case Tile.NORMAL_GROUND:
                 snowTiles.SetTileFlags(vecPos, TileFlags.None);
-                snowTiles.SetColor(vecPos, new Color(1.0f, 1.0f, 1.0f, 0.0f));
+                snowTiles.SetColor(vecPos, new Color(1.0f, 1.0f, 1.0f, tileShade));
                 break;
         }
     }

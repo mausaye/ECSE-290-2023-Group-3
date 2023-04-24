@@ -8,7 +8,6 @@ public abstract class InteractableNPC : MonoBehaviour
     private GameObject player;
     private Vector2 playerPos;
     private const double RANGE_THRESHOLD = 3.0; //maximum range in which the player is "near" this NPC. 
-    public Canvas canvas;
 
     protected PlayerInfo playerInfo = PlayerInfo.Instance;
 
