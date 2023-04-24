@@ -1,45 +1,42 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class TextboxManager : MonoBehaviour 
 {
     private static GameObject textbox;
     private static Text dialogueText;
-    private static bool visible = false;
 
     void Start() {
         textbox = GameObject.FindWithTag("Textbox");
         dialogueText = GetComponentInChildren<Text>();
-        textbox.transform.localScale = new Vector3(0, 0, 0);
-        dialogueText.fontSize = 52;
+        dialogueText.fontSize = 32;
+        textbox.SetActive(false);
     }
 
     void Update() {
-        if (visible) {
-            fitToScreen();
-        }
     }
 
     public static void createTextbox(string initialText) {
-        visible = true;
+        checkTextSize(initialText);
+        textbox.SetActive(true);
         dialogueText.text = initialText;
-        fitToScreen();
     }
 
     public static void setText(string newText) {
+        checkTextSize(newText);
         dialogueText.text = newText;
-        //dialogueText.transform.localPosition = new Vector3(0, -175, 0);
     }
 
     public static void removeTextbox() {
-        textbox.transform.localScale = new Vector3(0, 0, 0);
-        visible = false;
+        textbox.SetActive(false);
     }
 
-    public static void fitToScreen() {
-        textbox.transform.localScale = new Vector3((3 * (Screen.width / ((RectTransform)textbox.transform).rect.width)) / 4, (Screen.height / ((RectTransform)textbox.transform).rect.height) / 7, 1.0f);
-        textbox.transform.localPosition = new Vector3(0, -175, 0);
-        dialogueText.transform.localPosition = new Vector3(-100, -100, -100);
+    private static void checkTextSize(string s) {
+        if (s.Length > 60) {
+            throw new Exception(String.Format("This piece of text is too long. Stuff might be cut off: {0}", s));
+        }
     }
+
 }
