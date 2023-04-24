@@ -30,6 +30,8 @@ public class PlayerMovement : MonoBehaviour {
     public Tile tile;
 
     private const float tileShade = 0.6f; //opacity % for the tile you're under.
+    [SerializeField] private AudioSource stepSoundEffect;
+    [SerializeField] private AudioSource iceSoundEffect;
 
 
     void Start() {
@@ -87,6 +89,7 @@ public class PlayerMovement : MonoBehaviour {
             }
             else if ((state != PlayerState.Moving_On_Ground) && ((deltaX != 0) || (deltaY != 0))) {
                 //Debug.Log("state change : started moving on ground");
+
                 state = PlayerState.Moving_On_Ground;
             }
         }
@@ -97,6 +100,14 @@ public class PlayerMovement : MonoBehaviour {
         //Step 2 of update: Perform actions based on this new state.
         switch (state) {
             case PlayerState.Moving_On_Ground:
+
+                
+                
+                 stepSoundEffect.Play();
+                 
+                
+                
+              
                 Direction lastDir = playerInformation.getLastDirection();
                 playerInformation.setLastDirection(delta.x, delta.y, deltaX, deltaY);
                 if (lastDir != playerInformation.getLastDirection())
@@ -113,6 +124,7 @@ public class PlayerMovement : MonoBehaviour {
                 delta = newDelta;
                 break;
             case PlayerState.Moving_On_Ice:
+                iceSoundEffect.Play();
                 rb2d.position = rb2d.position + delta * Time.deltaTime;
                 break;
             case PlayerState.Stopped_On_Ice:
