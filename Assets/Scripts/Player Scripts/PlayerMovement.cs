@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     public float speed;
+    public float slideSpeed;
     private PlayerInfo playerInformation = PlayerInfo.Instance;
 
     private PlayerState state;
@@ -86,18 +87,27 @@ public class PlayerMovement : MonoBehaviour {
         //new deltas
         float deltaX = Input.GetAxisRaw("Horizontal") * speed;
         float deltaY = Input.GetAxisRaw("Vertical") * speed;
+
+        // for sliding velocities.
+        float deltaXS = Input.GetAxisRaw("Horizontal") * slideSpeed;
+        float deltaYS = Input.GetAxisRaw("Vertical") * slideSpeed;
+
         Vector2 newDelta = new Vector2(deltaX, deltaY);
+        Vector2 newDeltaS = new Vector2(deltaXS, deltaYS);
         playerInformation.setGridPosition(this.transform.position);
 
         if (tile == Tile.ICE) {
-
             if (state == PlayerState.Moving_On_Ice && collidedWithBoundary()) {
                 delta.x = 0;
                 delta.y = 0;
             }
 
+            if (state == PlayerState.Moving_On_Ground) { //ground to ice translation
+                delta = new Vector2(deltaXS, deltaYS);
+            }
+
             if (state == PlayerState.Stopped_On_Ice && (deltaX != 0 || deltaY != 0)) {
-                delta = new Vector2(deltaX, deltaY);
+                delta = new Vector2(deltaXS, deltaYS);
                 state = PlayerState.Moving_On_Ice;
             }
 
@@ -118,7 +128,6 @@ public class PlayerMovement : MonoBehaviour {
             }
             else if ((state != PlayerState.Moving_On_Ground) && ((deltaX != 0) || (deltaY != 0))) {
                 //Debug.Log("state change : started moving on ground");
-
                 state = PlayerState.Moving_On_Ground;
             }
         }
@@ -129,14 +138,7 @@ public class PlayerMovement : MonoBehaviour {
         //Step 2 of update: Perform actions based on this new state.
         switch (state) {
             case PlayerState.Moving_On_Ground:
-
-                
-                
                  stepSoundEffect.Play();
-                 
-                
-                
-              
                 Direction lastDir = playerInformation.getLastDirection();
                 playerInformation.setLastDirection(delta.x, delta.y, deltaX, deltaY);
                 if (lastDir != playerInformation.getLastDirection())
