@@ -10,6 +10,9 @@ public class Lighting : MonoBehaviour
 {
     [SerializeField]private Light2D light;
     [SerializeField] private Toggle toggle;
+    private PlayerInfo playerInformation = PlayerInfo.Instance;
+    private Quaternion targetRotation;
+    public float rotationSpeed = 5f;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +24,46 @@ public class Lighting : MonoBehaviour
 
     private void Update()
     {
+        Direction direction = playerInformation.getLastDirection();
+        Debug.Log(direction);
+
+        switch (direction)
+        {
+            case Direction.IDLE_LEFT:
+                if (light.transform.rotation != Quaternion.Euler(0f, 0f, 90))
+                    targetRotation = Quaternion.Euler(0f, 0f, 90);
+                break;
+            case Direction.MOVE_LEFT:
+                if (light.transform.rotation != Quaternion.Euler(0f, 0f, 90))
+                    targetRotation = Quaternion.Euler(0f, 0f, 90);
+                break;
+            case Direction.IDLE_RIGHT:
+                if (light.transform.rotation != Quaternion.Euler(0f, 0f, -90))
+                    targetRotation = Quaternion.Euler(0f, 0f, -90);
+                break;
+            case Direction.MOVE_RIGHT:
+                if (light.transform.rotation != Quaternion.Euler(0f, 0f, -90))
+                    targetRotation = Quaternion.Euler(0f, 0f, -90);
+                break;
+            case Direction.IDLE_UP:
+                if (light.transform.rotation != Quaternion.Euler(0f, 0f, 0))
+                    targetRotation = Quaternion.Euler(0f, 0f, 0);
+                break;
+            case Direction.MOVE_UP:
+                if (light.transform.rotation != Quaternion.Euler(0f, 0f, 0))
+                    targetRotation = Quaternion.Euler(0f, 0f, 0);
+                break;
+            case Direction.IDLE_DOWN:
+                if (light.transform.rotation != Quaternion.Euler(0f, 0f, 180))
+                    targetRotation = Quaternion.Euler(0f, 0f, 180);
+                break;
+            case Direction.MOVE_DOWN:
+                if (light.transform.rotation != Quaternion.Euler(0f, 0f, 180))
+                    targetRotation = Quaternion.Euler(0f, 0f, 180);
+                break;
+        }
+        light.transform.rotation = Quaternion.Lerp(light.transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
         float currentTime = Time.time;
         bool isNight = false;
 
@@ -42,10 +85,14 @@ public class Lighting : MonoBehaviour
         if (isNight)
         {
             light.pointLightOuterRadius = 10;
+            light.pointLightOuterAngle = 85;
+            light.pointLightInnerAngle = 0;
         }
         else
         {
             light.pointLightOuterRadius = 500;
+            light.pointLightOuterAngle = 360;
+            light.pointLightInnerAngle = 360;
         }
     }
 }
