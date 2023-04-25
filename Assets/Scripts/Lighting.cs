@@ -1,15 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using TMPro; // using text mesh for the clock display
-
+using UnityEngine.UI;
 using UnityEngine.Rendering; // used to access the volume component
 using UnityEngine.Rendering.Universal;
 
 public class Lighting : MonoBehaviour
 {
-    [SerializeField]private Light2D light; 
+    [SerializeField]private Light2D light;
+    [SerializeField] private Toggle toggle;
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +28,15 @@ public class Lighting : MonoBehaviour
         if (currentTime >= 18 * 3600 || currentTime < 6 * 3600)
         {
             isNight = true;
+        }
+
+        if (toggle.isOn)
+        {
+            isNight = true;
+        }
+        else
+        {
+            isNight = false;
         }
 
         if (isNight)
