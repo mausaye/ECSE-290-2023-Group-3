@@ -25,7 +25,7 @@ public class Lighting : MonoBehaviour
     private void Update()
     {
         Direction direction = playerInformation.getLastDirection();
-        Debug.Log(direction);
+        //Debug.Log(direction);
 
         switch (direction)
         {

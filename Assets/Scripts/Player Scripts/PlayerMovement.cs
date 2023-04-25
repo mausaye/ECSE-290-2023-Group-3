@@ -41,10 +41,10 @@ public class PlayerMovement : MonoBehaviour {
 
     }
 
+
     private bool inPuzzle() {
         float x = transform.position.x;
         float y = transform.position.y;
-        Debug.Log(String.Format("{0}, {1}", x, y));
         return inFirstPuzzle(x, y) || inSecondPuzzle(x, y) || inThirdPuzzle(x, y);
     }
 

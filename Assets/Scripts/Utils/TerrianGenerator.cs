@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 /* 
     HOW TO USE: Please read!
@@ -42,6 +43,8 @@ public class TerrianGenerator : MonoBehaviour
         FileInfo[] files = d.GetFiles("*.ice");
         int numFiles = files.Length;
 
+        Debug.Log(dir_path);
+
         System.Random r = new System.Random();
         int randInd = r.Next(0, numFiles);
         FileInfo file = files[randInd];
@@ -53,13 +56,22 @@ public class TerrianGenerator : MonoBehaviour
         string path;
         switch (difficulty) {
             case 1:
-                path = chooseRandomPuzzlePathInDirectory("Assets/Resources/GoodPuzzles/easy/");
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
+                    path = chooseRandomPuzzlePathInDirectory(Application.dataPath + "/Resources/GoodPuzzles/easy/");
+                else 
+                    path = chooseRandomPuzzlePathInDirectory("Assets/Resources/GoodPuzzles/easy/");
                 break;
             case 2:
-                path = chooseRandomPuzzlePathInDirectory("Assets/Resources/GoodPuzzles/medium/");
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
+                    path = chooseRandomPuzzlePathInDirectory(Application.dataPath + "/Resources/GoodPuzzles/medium/");
+                else 
+                    path = chooseRandomPuzzlePathInDirectory("Assets/Resources/GoodPuzzles/medium/");
                 break;
             case 3:
-                path = chooseRandomPuzzlePathInDirectory("Assets/Resources/GoodPuzzles/hard/");
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
+                    path = chooseRandomPuzzlePathInDirectory(Application.dataPath + "/Resources/GoodPuzzles/hard/");
+                else 
+                    path = chooseRandomPuzzlePathInDirectory("Assets/Resources/GoodPuzzles/hard/");
                 break;
             default:
                 Debug.Log("Could not find puzzle with specified difficulty. Giving you an easy one by default.");
@@ -95,7 +107,6 @@ public class TerrianGenerator : MonoBehaviour
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
                     Vector3Int pos = new Vector3Int(i, n - 1 - j, 0);
-                    Debug.Log(String.Format("{0}, {1}", i, j));
                     //TODO: Switch this to a switch statement.
                     if (puzzle[j, i] == 'S') {
                         snowTiles.SetTile(pos + offset, snowTile);

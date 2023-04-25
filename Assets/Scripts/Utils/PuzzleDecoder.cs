@@ -5,7 +5,14 @@ using System.IO;
 public static class PuzzleDecoder {
 
     public static char[,] decode(string filepath) {
-        string[] rawLines = File.ReadAllLines(filepath);
+        string[] rawLines;
+        try {
+            rawLines = File.ReadAllLines(filepath);
+        }
+        catch (FileNotFoundException e) {
+            rawLines = new string[1];
+            Application.Quit();
+        }
         int n = Convert.ToInt32(rawLines[0]);
         char[,] puzzle = new char[n + 2, n + 2];
 
