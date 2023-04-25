@@ -97,9 +97,9 @@ public class PlayerMovement : MonoBehaviour {
         playerInformation.setGridPosition(this.transform.position);
 
         if (tile == Tile.ICE) {
-            if (state == PlayerState.Moving_On_Ice && collidedWithBoundary()) {
-                delta.x = 0;
-                delta.y = 0;
+            if (collidedWithBoundary()) {
+                delta = new Vector2(deltaXS, deltaYS);
+                return;
             }
 
             if (state == PlayerState.Moving_On_Ground) { //ground to ice translation
