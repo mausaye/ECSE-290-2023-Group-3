@@ -41,6 +41,27 @@ public class PlayerMovement : MonoBehaviour {
 
     }
 
+    private bool inPuzzle() {
+        float x = transform.position.x;
+        float y = transform.position.y;
+        Debug.Log(String.Format("{0}, {1}", x, y));
+        return inFirstPuzzle(x, y) || inSecondPuzzle(x, y) || inThirdPuzzle(x, y);
+    }
+
+    private bool inFirstPuzzle(float x, float y) {
+        return ((x>= -4 && x <= 13) && (y >= 17 && y <= 33));
+    }
+
+    private bool inSecondPuzzle(float x, float y) {
+        return ((x>= -5 && x <= 14) && (y >= 36 && y <= 52));
+    }
+
+    private bool inThirdPuzzle(float x, float y) {
+        return ((x>= -6 && x <= 16) && (y >= 57 && y <= 76));
+    }
+
+
+
     void Update() {
         //Step 1 of update: Figure out what state we're in, get info for next frame.
         int2 pos = playerInformation.getGridPosition();
@@ -49,6 +70,14 @@ public class PlayerMovement : MonoBehaviour {
 
         //could make this only highlight when on a puzzle.
         highlightTileUnderMe();
+
+        if (inPuzzle()) {
+            GetComponent<CapsuleCollider2D>().enabled = false;
+        }
+        else {
+            GetComponent<CapsuleCollider2D>().enabled = true;
+        }
+        //Debug.Log(GetComponent<CapsuleCollider2D>().enabled);
 
         if (playerInformation.isInConvo()) {
             return;
