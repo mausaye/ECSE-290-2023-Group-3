@@ -26,7 +26,6 @@ public static class PuzzleDecoder {
                 }
             }
         }   
-
         return puzzle;
     }
 }

@@ -53,11 +53,11 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private bool inSecondPuzzle(float x, float y) {
-        return ((x>= -5 && x <= 14) && (y >= 36 && y <= 52));
+        return ((x>= -5 && x <= 14) && (y >= 36 && y <= 53));
     }
 
     private bool inThirdPuzzle(float x, float y) {
-        return ((x>= -6 && x <= 16) && (y >= 57 && y <= 76));
+        return ((x>= -6 && x <= 16) && (y >= 57 && y <= 77));
     }
 
 
