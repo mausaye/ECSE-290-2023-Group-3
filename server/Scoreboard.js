@@ -9,8 +9,14 @@ function Scoreboard(topK) {
     */
     this.q = new MinQueue(5);
 
-    this.testQ()
+    //initialize with bad scores that can easily be beaten.
+    this.addScore(1000);
+    this.addScore(1050);
+    this.addScore(3401);
+    this.addScore(235);
+    this.addScore(40582);
 }
+
 
 Scoreboard.prototype.testQ = function() {
     this.addScore(4)
