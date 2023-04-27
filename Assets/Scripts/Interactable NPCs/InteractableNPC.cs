@@ -5,8 +5,8 @@ using UnityEngine;
 
 public abstract class InteractableNPC : MonoBehaviour
 {
-    private GameObject player;
-    private Vector2 playerPos;
+    protected GameObject player;
+    protected Vector2 playerPos;
     private const double RANGE_THRESHOLD = 3.0; //maximum range in which the player is "near" this NPC. 
 
     protected PlayerInfo playerInfo = PlayerInfo.Instance;
@@ -29,11 +29,11 @@ public abstract class InteractableNPC : MonoBehaviour
         }
     }
 
-    private bool playerInteractionPossible() {
+    protected bool playerInteractionPossible() {
         return playerInRange() && playerFacingMe();
     }
 
-    private bool playerBeganInteraction() {
+    protected bool playerBeganInteraction() {
         return playerInteractionPossible() && interactButtonPressed();
     }
 
@@ -79,7 +79,7 @@ public abstract class InteractableNPC : MonoBehaviour
         }
     }
 
-    private bool interactButtonPressed() {
+    protected bool interactButtonPressed() {
         return Input.GetKeyDown(KeyCode.Space);
     }
 
