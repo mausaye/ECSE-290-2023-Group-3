@@ -86,7 +86,7 @@ public class PlayerMovement : MonoBehaviour {
 
         //new deltas
         float deltaX = Input.GetAxisRaw("Horizontal") * speed;
-        float deltaY = Input.GetAxisRaw("Vertical") * speed;
+        float deltaY = deltaX == 0 ? Input.GetAxisRaw("Vertical") * speed : 0;
 
         // for sliding velocities.
         float deltaXS = Input.GetAxisRaw("Horizontal") * slideSpeed;
