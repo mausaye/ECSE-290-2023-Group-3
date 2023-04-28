@@ -18,9 +18,13 @@ public class WanderingNPC : InteractableNPC
     private int textInd = 0;
     private bool up = true; //walking up to start;
 
+    private float timeLeft = 0.0f;
+
     public string[] text;
     public int speed;
     public float timeForDirection = 3.0f;
+
+    private bool wasWalking = false;
 
     private Rigidbody2D rb2d;
 
@@ -44,6 +48,14 @@ public class WanderingNPC : InteractableNPC
             move();
         }
 
+        if (state == State.IN_CONVO && !playerInfo.isInConvo()) {
+            if (wasWalking)
+                state = State.WALKING;
+            else 
+                state = State.STOPPED;
+            wasWalking = false;
+        }
+
         //do nothing if stopped.
 
         if (state != State.IN_CONVO)
@@ -61,6 +73,9 @@ public class WanderingNPC : InteractableNPC
     }
 
     public override void onInteraction() {
+        if (state == State.WALKING) {
+            wasWalking = true;
+        }
         state = State.IN_CONVO;
         convo(text, ref textInd);
     }
