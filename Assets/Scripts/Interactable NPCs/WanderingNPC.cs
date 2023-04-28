@@ -13,15 +13,22 @@ public class WanderingNPC : InteractableNPC
         IN_CONVO
     }
 
+    public enum Path {
+        LEFT_RIGHT,
+        UP_DOWN
+    }
+
+    public Path path;
     private State state;
+    
     private float timer = 0;
     private int textInd = 0;
-    private bool up = true; //walking up to start;
-
-    private float timeLeft = 0.0f;
+    private bool goInPosDir = true; //walking up to start;
 
     public string[] text;
+
     public int speed;
+
     public float timeForDirection = 3.0f;
 
     private bool wasWalking = false;
@@ -67,7 +74,7 @@ public class WanderingNPC : InteractableNPC
         }
         else if (state == State.STOPPED && timer > timeForDirection) {
             state = State.WALKING;
-            up = !up;
+            goInPosDir = !goInPosDir;
             timer = 0;
         }
     }
@@ -81,11 +88,22 @@ public class WanderingNPC : InteractableNPC
     }
 
     private void move() {
-        if (up) {
-            rb2d.position = rb2d.position + new Vector2(0, speed * Time.deltaTime);
+        if (path == Path.UP_DOWN) {
+            if (goInPosDir) {
+                rb2d.position = rb2d.position + new Vector2(0, speed * Time.deltaTime);
+            }
+            else {
+                rb2d.position = rb2d.position - new Vector2(0, speed * Time.deltaTime);
+            }
         }
         else {
-            rb2d.position = rb2d.position - new Vector2(0, speed * Time.deltaTime);
+            if (goInPosDir) {
+                rb2d.position = rb2d.position + new Vector2(speed * Time.deltaTime, 0);
+            }
+            else {
+                rb2d.position = rb2d.position - new Vector2(speed * Time.deltaTime, 0);
+            }
+
         }
     }
 }
