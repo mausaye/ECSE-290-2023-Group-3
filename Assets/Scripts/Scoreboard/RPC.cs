@@ -29,10 +29,10 @@ public class RPC : MonoBehaviour
     private List<Score> returnedScoreboard;
 
     // production uri
-    //private readonly string uri = "http://3.19.53.71:5050/";
+    private readonly string uri = "http://3.19.53.71:5050/";
 
     // local uri
-    private readonly string uri = "http://localhost:5050/";
+    // private readonly string uri = "http://localhost:5050/";
 
     // Send over game time in seconds, also assigns times with updated scoreboard.
     public void UploadTime(string name, int time) {
