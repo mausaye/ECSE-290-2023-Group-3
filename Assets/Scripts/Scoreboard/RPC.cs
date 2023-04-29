@@ -3,7 +3,6 @@ using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
 using System;
-
 /*
     HOW TO USE: PLEASE READ!
 
@@ -27,22 +26,23 @@ using System;
 
 public class RPC : MonoBehaviour
 {
-    private string returnedScoreboard;
+    private List<Score> returnedScoreboard;
 
     // production uri
-    private readonly string uri = "http://3.19.53.71:5050/";
+    //private readonly string uri = "http://3.19.53.71:5050/";
 
     // local uri
-    //private readonly string uri = "http://localhost:5050/";
+    private readonly string uri = "http://localhost:5050/";
 
     // Send over game time in seconds, also assigns times with updated scoreboard.
-    public void UploadTime(int time) {
+    public void UploadTime(string name, int time) {
         ScoreMessage m = new ScoreMessage();
         m.score = time;
+        m.name = name;
         StartCoroutine(PostRequest(uri, JsonUtility.ToJson(m)));
     }
 
-    public string GetTimes(Action<string> callback)
+    public List<Score> GetTimes(Action<List<Score>> callback)
     {
         StartCoroutine(GetRequest(uri, (retrivedScoreboard) =>
         {
@@ -65,11 +65,12 @@ public class RPC : MonoBehaviour
 
     // Converting classes to JSON is much simpler than converting strings in Unity. Pretty stupid.
     private struct ScoreMessage {
+        public string name;
         public int score;
     }
 
     //edited from Unity docs.
-    private IEnumerator GetRequest(string uri, Action<string> callback) {
+    private IEnumerator GetRequest(string uri, Action<List<Score>> callback) {
         using (UnityWebRequest webRequest = UnityWebRequest.Get(uri)) {
 
             yield return webRequest.SendWebRequest();
@@ -87,7 +88,10 @@ public class RPC : MonoBehaviour
                     Debug.LogError(pages[page] + ": HTTP Error: " + webRequest.error);
                     break;
                 case UnityWebRequest.Result.Success:
-                    this.returnedScoreboard = webRequest.downloadHandler.text;
+                    var result = System.Text.Encoding.UTF8.GetString(webRequest.downloadHandler.data);
+                    result = "{\"result\":" + result + "}";
+                    var resultScoreList = JsonHelper.FromJson<Score>(result);
+                    this.returnedScoreboard = resultScoreList;
                     break;
             }
         }
@@ -114,7 +118,19 @@ public class RPC : MonoBehaviour
             }
             else
             {
-                this.returnedScoreboard = webRequest.downloadHandler.text;
+                if (webRequest.isDone)
+                {
+                    // handle the result
+                    var result = System.Text.Encoding.UTF8.GetString(webRequest.downloadHandler.data);
+                    result = "{\"result\":" + result + "}";
+                    var resultScoreList = JsonHelper.FromJson<Score>(result);
+                    this.returnedScoreboard = resultScoreList;
+                }
+                else
+                {
+                    //handle the problem
+                    Debug.Log("Error! data couldn't get.");
+                }
             }
         }
     }

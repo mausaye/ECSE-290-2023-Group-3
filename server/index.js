@@ -22,8 +22,9 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
-        let scoreToAdd = req.body['score']
-        scoreboard.addScore(parseInt(scoreToAdd));
+        const name = req.body.name;
+        const score = req.body.score;
+        scoreboard.addScore(name, score);
         res.send(scoreboard.getJSON());
 });
 

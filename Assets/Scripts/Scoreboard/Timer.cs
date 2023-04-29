@@ -8,21 +8,19 @@ using Frosty.Scoreboards;
 
 public class Timer : MonoBehaviour
 {
-    public static float gameTime;
-    public bool isAdded = false;
+    private float gameTime = 0;
+    public static float finishTime;
     [SerializeField] private TextMeshProUGUI timerText;
-    [SerializeField] private GameObject panel;
+    [SerializeField] private GameObject finishPanel; 
     [SerializeField] private TextMeshProUGUI finishTimeText;
+    
     [SerializeField] private GameObject player;
-    private RPC rpc;
+    
 
-    public bool endGameCondition = gameTime > 60;
 
     // Start is called before the first frame update
     void Start()
     {
-        gameTime = 0;
-        rpc = this.gameObject.AddComponent(typeof(RPC)) as RPC;
         DisplayTime(gameTime);
     }
 
@@ -41,31 +39,29 @@ public class Timer : MonoBehaviour
         float minutes = Mathf.FloorToInt(finishtime / 60);
         float seconds = Mathf.FloorToInt(finishtime % 60);
 
-        panel.SetActive(true);
         if (minutes < 1) {
             finishTimeText.text = string.Format("You solve the puzzle in {0}s", seconds);
         }
         else {
             finishTimeText.text = string.Format("You solve the puizzle in {0}m{1}s", minutes, seconds);
         }
+        finishPanel.SetActive(true);
+
     }
 
 
     // Update is called once per frame
     void Update()
     {
-        //change gameTime > 5 to game end condition
-        if (player.transform.position.y > 173 && !isAdded)
+        if (player.transform.position.y > 173)
         {
-                DisplayFinishTime(gameTime);
-            if (!isAdded) {
-                rpc.UploadTime((int)gameTime);
-                isAdded = true;
-            }
+            finishTime = gameTime;
+            DisplayFinishTime(finishTime);
         }
         else {
             gameTime += Time.deltaTime;
             DisplayTime(gameTime);
         }
     }
+
 }

@@ -80,5 +80,3 @@ crashlytics-build.properties
 .DS_Store
 Assets/.DS_Store
 server/node_modules
-server/package.json
-server/package-lock.json
