@@ -498,10 +498,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "W \u2013 Move Up\nA \u2013 Move Left\nS \u2013 Move Down\nD \u2013 Move
-    Right\nH,J,K,L\u2013 Emote(s)\n\nWalk around on campus to explore the wonders
-    of Case Western. Speak to NPCs by pressing SPACE. If you counter any ice along
-    your path be careful! You will not be able to change directions.\n\nGet to KSL
-    as quickly as possible to beat the game.\n"
+    Right\nH,J,K,L\u2013 Emote(s)\nESCAPE - Pause\n\nWalk around on campus to explore
+    the wonders of Case Western. Speak to NPCs by pressing SPACE. If you counter
+    any ice along your path be careful! You will not be able to change directions.\n\nGet
+    to KSL as quickly as possible to beat the game.\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 6e31ea03faae746cd8051f55c16d6bd6, type: 2}
   m_sharedMaterial: {fileID: 5072638127631903278, guid: 6e31ea03faae746cd8051f55c16d6bd6, type: 2}
