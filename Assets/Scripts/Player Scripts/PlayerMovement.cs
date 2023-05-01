@@ -90,7 +90,7 @@ public class PlayerMovement : MonoBehaviour {
 
         // for sliding velocities.
         float deltaXS = Input.GetAxisRaw("Horizontal") * slideSpeed;
-        float deltaYS = Input.GetAxisRaw("Vertical") * slideSpeed;
+        float deltaYS = deltaXS == 0 ? Input.GetAxisRaw("Vertical") * slideSpeed : 0;
 
         Vector2 newDelta = new Vector2(deltaX, deltaY);
         Vector2 newDeltaS = new Vector2(deltaXS, deltaYS);
