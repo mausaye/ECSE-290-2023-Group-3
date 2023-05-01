@@ -13,7 +13,7 @@
 import numpy as np
 from enum import Enum
 puzzle_id_counter = 0
-min_solution_length = 11
+min_solution_length = 13
 
 
 # -------------------------------------------------------------------------------------------------------------------------- #
@@ -159,27 +159,22 @@ class Puzzle:
     # 78% chance a tile is ice (0), 15% chance a single tile is snow (1), 2% chance it's a 2x2 island of snow, 5% chance it's an obstacle (2).
     # We can test and change these percentages later.
     def generate(self):
+        count = 0
         for i in range(self.size):
             for j in range(self.size):
                 # if something has already been assigned, don't try to reassign
                 if self.grid[i, j] == 0:
                     tile = 0
-
-                    # if we're not on the boundary, also consider generating island 
-                    if (i < self.size - 1) and j < (self.size - 1):
-                        tile = int(np.random.choice(np.arange(0, 4), p=[0.90, 0.01, .01, 0.08]))
-                    else:
-                        tile = np.random.choice(np.arange(0, 3), p=[0.90, 0.02, 0.08]) # probabilities a bit adjusted, but it's fine 
-                    
-                    # if 3 chosen, generate 2x2 snow block
-                    if tile == 3:
-                        self.grid[i, j] = 1.0
-                        self.grid[i + 1, j] = 1.0
-                        self.grid[i, j + 1] = 1.0 
-                        self.grid[i + 1, j + 1] = 1.0
-                    # otherwise, just generate the single chosen tile
-                    else:
+                    if (count > 20):
+                        tile = int(np.random.choice([0, 2], p=[0.91, 0.09]))
                         self.grid[i, j] = tile
+                        continue
+
+                    tile = np.random.choice(np.arange(0, 3), p=[0.90, 0.08, 0.02]) # probabilities a bit adjusted, but it's fine 
+                    if tile == 1:
+                        count += 1
+                    
+                    self.grid[i, j] = tile
 
     
     def get(self, x: int, y: int):
