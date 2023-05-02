@@ -39,11 +39,10 @@ public class TerrianGenerator : MonoBehaviour
     private List<Vector2Int> offsets;
 
     private string chooseRandomPuzzlePathInDirectory(string dir_path) {
+
         DirectoryInfo d = new DirectoryInfo(dir_path);
         FileInfo[] files = d.GetFiles("*.ice");
         int numFiles = files.Length;
-
-        Debug.Log(dir_path);
 
         System.Random r = new System.Random();
         int randInd = r.Next(0, numFiles);
@@ -54,6 +53,29 @@ public class TerrianGenerator : MonoBehaviour
 
     private char[,] chooseRandomPuzzle(int difficulty) {
         string path;
+
+        //My god Unity is garbage. Actually just including everything in the resources folder is too complex for Unity,
+        //so random files aren't chosen for WebGL, because it won't include them unless I explicity load the percise file 
+        //name for whatever reason. Works fine when built for other platforms of course. 
+        #if UNITY_WEBGL
+        string puz = "/Resources/EasyPuzzle.ice";
+        TextAsset txt;
+        switch (difficulty) {
+            case 1:
+                txt = (TextAsset)Resources.Load("EasyPuzzle", typeof(TextAsset));  
+                return PuzzleDecoder.decodeWebGL(new List<string>(txt.text.Split('\n')));
+                break;
+            case 2:
+                txt = (TextAsset)Resources.Load("MediumPuzzle", typeof(TextAsset));  
+                return PuzzleDecoder.decodeWebGL(new List<string>(txt.text.Split('\n')));
+                break;
+            case 3:
+                txt = (TextAsset)Resources.Load("HardPuzzle", typeof(TextAsset));  
+                return PuzzleDecoder.decodeWebGL(new List<string>(txt.text.Split('\n')));
+                break;
+        }
+        #endif
+
         switch (difficulty) {
             case 1:
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
