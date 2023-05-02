@@ -73,7 +73,6 @@ public class PlayerMovement : MonoBehaviour {
             float y = transform.position.y;
 
             //Bug: Tile you teleport from doesn't reset, not sure why. Not a big deal.
-
             // + 1 on y so the tile under you is changed (as (pos.x, pos.y) is now a surrounding tile)
             resetSurroundingTiles(new Vector3Int(pos.x, pos.y + 1, 0));
             if (inFirstPuzzle(x, y)) {
@@ -85,6 +84,7 @@ public class PlayerMovement : MonoBehaviour {
             else if (inThirdPuzzle(x, y)) {
                 transform.position = new Vector3(0, 55, 0);
             }
+            playerInformation.setGridPosition(this.transform.position);
             pos = playerInformation.getGridPosition();
         }
 
