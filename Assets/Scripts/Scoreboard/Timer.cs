@@ -43,7 +43,7 @@ public class Timer : MonoBehaviour
             finishTimeText.text = string.Format("You solved the puzzle in {0}s", seconds);
         }
         else {
-            finishTimeText.text = string.Format("You solved the puizzle in {0}m{1}s", minutes, seconds);
+            finishTimeText.text = string.Format("You solved the puzzle in {0}m{1}s", minutes, seconds);
         }
         finishPanel.SetActive(true);
 
