@@ -51,15 +51,12 @@ public class TerrianGenerator : MonoBehaviour
         return dir_path + file.Name;
     }
 
-    private char[,] chooseRandomPuzzle(int difficulty) {
-        string path;
+    private char[,] chooseRandomPuzzleComplexVersion(int difficulty) {
+        System.Random r = new System.Random();
+        int randInd = r.Next(0, 10);
 
-        //My god Unity is garbage. Actually just including everything in the resources folder is too complex for Unity,
-        //so random files aren't chosen for WebGL, because it won't include them unless I explicity load the percise file 
-        //name for whatever reason. Works fine when built for other platforms of course. 
-        #if UNITY_WEBGL
-        string puz = "/Resources/EasyPuzzle.ice";
         TextAsset txt;
+        Debug.Log("EasyPuzzle" + randInd);
         switch (difficulty) {
             case 1:
                 txt = (TextAsset)Resources.Load("EasyPuzzle", typeof(TextAsset));  
@@ -73,8 +70,22 @@ public class TerrianGenerator : MonoBehaviour
                 txt = (TextAsset)Resources.Load("HardPuzzle", typeof(TextAsset));  
                 return PuzzleDecoder.decodeWebGL(new List<string>(txt.text.Split('\n')));
                 break;
+            default:
+                txt = (TextAsset)Resources.Load("HardPuzzle", typeof(TextAsset));  
+                return PuzzleDecoder.decodeWebGL(new List<string>(txt.text.Split('\n')));
         }
-        #endif
+
+    }
+
+    private char[,] chooseRandomPuzzle(int difficulty) {
+        string path;
+
+        //My god Unity is garbage. Actually just including everything in the resources folder is too complex for Unity,
+        //so random files aren't chosen for WebGL, because it won't include them unless I explicity load the percise file 
+        //name for whatever reason. Works fine when built for other platforms of course. 
+        #if UNITY_WEBGL
+            return chooseRandomPuzzleComplexVersion(difficulty);
+        #endif 
 
         switch (difficulty) {
             case 1:
