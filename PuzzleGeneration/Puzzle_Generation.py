@@ -13,7 +13,8 @@
 import numpy as np
 from enum import Enum
 puzzle_id_counter = 0
-min_solution_length = 13
+min_solution_length = 10
+max_solution_length = 13
 
 
 # -------------------------------------------------------------------------------------------------------------------------- #
@@ -142,7 +143,7 @@ class Puzzle:
         total_path_complexity = 0 
 
         for solution in self.solutions:
-            if len(solution.dirs) <= min_solution_length:
+            if len(solution.dirs) < min_solution_length or len(solution.dirs) > max_solution_length:
                 #print("This is a trivial puzzle. Probably don't want to use it.")
                 return -1.0
             else:

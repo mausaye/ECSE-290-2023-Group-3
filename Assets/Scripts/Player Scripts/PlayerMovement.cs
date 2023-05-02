@@ -67,6 +67,30 @@ public class PlayerMovement : MonoBehaviour {
         //Step 1 of update: Figure out what state we're in, get info for next frame.
         int2 pos = playerInformation.getGridPosition();
 
+        //Step 1.1: check if they want to restart 
+        if (Input.GetKey(KeyCode.X)) {
+            float x = transform.position.x;
+            float y = transform.position.y;
+
+            //Bug: Tile you teleport from doesn't reset, not sure why. Not a big deal.
+
+            // + 1 on y so the tile under you is changed (as (pos.x, pos.y) is now a surrounding tile)
+            resetSurroundingTiles(new Vector3Int(pos.x, pos.y + 1, 0));
+            if (inFirstPuzzle(x, y)) {
+                transform.position = new Vector3(0, 15, 0);
+            }
+            else if (inSecondPuzzle(x, y)) {
+                transform.position = new Vector3(0, 34, 0);
+            }
+            else if (inThirdPuzzle(x, y)) {
+                transform.position = new Vector3(0, 55, 0);
+            }
+            pos = playerInformation.getGridPosition();
+        }
+
+
+
+
         tile = getTileUnderMe();
 
         //could make this only highlight when on a puzzle.
@@ -121,6 +145,7 @@ public class PlayerMovement : MonoBehaviour {
                 state = PlayerState.Moving_On_Ice;
             }
         }
+
         else if (tile == Tile.NORMAL_GROUND) {
             if (state != PlayerState.Stopped_On_Ground && deltaX == 0 && deltaY == 0) {
                 //Debug.Log("state change: Stopped on normal ground");
@@ -143,7 +168,9 @@ public class PlayerMovement : MonoBehaviour {
                 playerInformation.setLastDirection(delta.x, delta.y, deltaX, deltaY);
                 if (lastDir != playerInformation.getLastDirection())
                     triggerAnimator(playerInformation.getLastDirection());
-                rb2d.position = rb2d.position + newDelta * Time.deltaTime;
+                if (!collidedWithBoundary()) {
+                    rb2d.position = rb2d.position + newDelta * Time.deltaTime;
+                }
                 delta = newDelta;
                 break;
             case PlayerState.Stopped_On_Ground:
@@ -151,15 +178,21 @@ public class PlayerMovement : MonoBehaviour {
                 playerInformation.setLastDirection(delta.x, delta.y, deltaX, deltaY);
                 if (lastDir != playerInformation.getLastDirection())
                     triggerAnimator(playerInformation.getLastDirection());
-                rb2d.position = rb2d.position + newDelta * Time.deltaTime;
+                if (!collidedWithBoundary()) {
+                    rb2d.position = rb2d.position + newDelta * Time.deltaTime;
+                }
                 delta = newDelta;
                 break;
             case PlayerState.Moving_On_Ice:
                 iceSoundEffect.Play();
-                rb2d.position = rb2d.position + delta * Time.deltaTime;
+                if (!collidedWithBoundary()) {
+                    rb2d.position = rb2d.position + delta * Time.deltaTime;
+                }
                 break;
             case PlayerState.Stopped_On_Ice:
-                rb2d.position = rb2d.position + newDelta * Time.deltaTime;
+                if (!collidedWithBoundary()) {
+                    rb2d.position = rb2d.position + newDelta * Time.deltaTime;
+                }
 
                 break;
         }
@@ -224,7 +257,7 @@ public class PlayerMovement : MonoBehaviour {
         int[] di = {0, 1, 0, -1, 1, 1, -1, -1};
         int[] dj = {1, 0, -1, 0, -1, 1, -1, 1};
         for (int k = 0; k < 8; k++) {
-                Vector3Int adjacentTilePos = new Vector3Int(vecPos.x + di[k], vecPos.y + dj[k]);
+                Vector3Int adjacentTilePos = new Vector3Int(vecPos.x + di[k], vecPos.y + dj[k], 0);
                 iceTiles.SetTileFlags(adjacentTilePos, TileFlags.None);
                 snowTiles.SetTileFlags(adjacentTilePos,  TileFlags.None);
                 iceTiles.SetColor(adjacentTilePos, new Color(1.0f, 1.0f, 1.0f, 1.0f));
