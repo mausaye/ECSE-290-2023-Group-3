@@ -27,7 +27,7 @@ namespace Frosty.Scoreboards{
         {
             rpc = this.gameObject.AddComponent(typeof(RPC)) as RPC;
             GetScoreFromServer((top5Times) => {
-                Debug.Log(top5Times);
+                //Debug.Log(top5Times);
                 this.top5Times = top5Times;
 
                 // This code will be executed once the top5Times array has been processed
@@ -39,7 +39,7 @@ namespace Frosty.Scoreboards{
         {
             rpc.GetTimes((records) =>
             {
-                Debug.Log(records);
+                //Debug.Log(records);
                 this.top5Times = records;
 
                 callback(this.top5Times);

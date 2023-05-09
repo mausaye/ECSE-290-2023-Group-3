@@ -38,6 +38,8 @@ public class TerrianGenerator : MonoBehaviour
 
     private List<Vector2Int> offsets;
 
+    private const bool PRESNTATION_MODE = true;
+
     private string chooseRandomPuzzlePathInDirectory(string dir_path) {
 
         DirectoryInfo d = new DirectoryInfo(dir_path);
@@ -56,7 +58,7 @@ public class TerrianGenerator : MonoBehaviour
         int randInd = r.Next(0, 10);
 
         TextAsset txt;
-        Debug.Log("EasyPuzzle" + randInd);
+        //Debug.Log("EasyPuzzle" + randInd);
         switch (difficulty) {
             case 1:
                 txt = (TextAsset)Resources.Load("EasyPuzzle", typeof(TextAsset));  
@@ -89,25 +91,34 @@ public class TerrianGenerator : MonoBehaviour
 
         switch (difficulty) {
             case 1:
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
+                if (PRESNTATION_MODE) {
+                    path = "Assets/Resources/GoodPuzzles/easy/puzzle0.ice";
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
                     path = chooseRandomPuzzlePathInDirectory(Application.dataPath + "/Resources/GoodPuzzles/easy/");
                 else 
                     path = chooseRandomPuzzlePathInDirectory("Assets/Resources/GoodPuzzles/easy/");
                 break;
             case 2:
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
+                if (PRESNTATION_MODE) {
+                    path = "Assets/Resources/GoodPuzzles/medium/puzzle0.ice";
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
                     path = chooseRandomPuzzlePathInDirectory(Application.dataPath + "/Resources/GoodPuzzles/medium/");
                 else 
                     path = chooseRandomPuzzlePathInDirectory("Assets/Resources/GoodPuzzles/medium/");
                 break;
             case 3:
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
+                if (PRESNTATION_MODE) {
+                    path = "Assets/Resources/GoodPuzzles/hard/puzzle0.ice";
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
                     path = chooseRandomPuzzlePathInDirectory(Application.dataPath + "/Resources/GoodPuzzles/hard/");
                 else 
                     path = chooseRandomPuzzlePathInDirectory("Assets/Resources/GoodPuzzles/hard/");
                 break;
             default:
-                Debug.Log("Could not find puzzle with specified difficulty. Giving you an easy one by default.");
+                //Debug.Log("Could not find puzzle with specified difficulty. Giving you an easy one by default.");
                 path = chooseRandomPuzzlePathInDirectory("Assets/Resources/GoodPuzzles/easy/");
                 break;
         }

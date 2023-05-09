@@ -136,12 +136,12 @@ public class PlayerMovement : MonoBehaviour {
             }
 
             if (state != PlayerState.Stopped_On_Ice && delta.x == 0 && delta.y == 0) {
-                Debug.Log("state change : Stopped on ice");
+                //Debug.Log("state change : Stopped on ice");
                 state = PlayerState.Stopped_On_Ice;
             }
             else if (state != PlayerState.Moving_On_Ice && ((delta.x != 0) || (delta.y != 0))) {
                 //moving on ice and boundary nearby, we stopped.
-                Debug.Log("state change : started moving on ice");
+                //Debug.Log("state change : started moving on ice");
                 state = PlayerState.Moving_On_Ice;
             }
         }

@@ -8,7 +8,7 @@ public static class PuzzleDecoder {
 
     public static char[,] decodeWebGL(List<string> rawLines) {
         int n = Convert.ToInt32(rawLines[0]);
-        Debug.Log(n);
+        //Debug.Log(n);
         char[,] puzzle = new char[n + 2, n + 2];
 
         for (int i = 1; i <= n + 2; i++) {
@@ -41,7 +41,7 @@ public static class PuzzleDecoder {
             Application.Quit();
         }
         int n = Convert.ToInt32(rawLines[0]);
-        Debug.Log(n);
+        //Debug.Log(n);
         char[,] puzzle = new char[n + 2, n + 2];
 
         for (int i = 1; i <= n + 2; i++) {

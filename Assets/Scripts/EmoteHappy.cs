@@ -24,9 +24,9 @@ public class EmoteHappy : MonoBehaviour
 
         if (buttonActive && Input.GetKey(KeyCode.N))
         {
-            Debug.Log("pressed N"); 
+            //Debug.Log("pressed N"); 
             emote.SetActive(true);
-            Debug.Log("setActive");
+            //Debug.Log("setActive");
             //emote.transform.position = transform.position + Vector3.up * yOffset;
            buttonActive = true;
             buttonTimer = 0f;

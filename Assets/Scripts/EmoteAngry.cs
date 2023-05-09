@@ -27,7 +27,7 @@ public class EmoteAngry : MonoBehaviour
         
             if (Input.GetKey(KeyCode.H))
             {
-                Debug.Log("pressed H");
+                //Debug.Log("pressed H");
                 emoteAngry.SetActive(true);
                 buttonActive = true;
                 buttonTimer = 0f;
@@ -37,7 +37,7 @@ public class EmoteAngry : MonoBehaviour
             }
             else if (Input.GetKey(KeyCode.J))
             {
-                Debug.Log("pressed J");
+                //Debug.Log("pressed J");
                 emoteHeart.SetActive(true);
                 buttonActive = true;
                 buttonTimer = 0f;
@@ -47,7 +47,7 @@ public class EmoteAngry : MonoBehaviour
             }
             else if (Input.GetKey(KeyCode.K))
             {
-                Debug.Log("pressed K");
+                //Debug.Log("pressed K");
                 emoteSad.SetActive(true);
                 buttonActive = true;
                 buttonTimer = 0f;
@@ -57,7 +57,7 @@ public class EmoteAngry : MonoBehaviour
             }
             else if (Input.GetKey(KeyCode.L))
             {
-                Debug.Log("pressed L");
+                //Debug.Log("pressed L");
                 emoteHappy.SetActive(true);
                 buttonActive = true;
                 buttonTimer = 0f;
