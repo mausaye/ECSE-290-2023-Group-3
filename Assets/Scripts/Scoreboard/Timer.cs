@@ -53,7 +53,7 @@ public class Timer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (player.transform.position.y > 173)
+        if (player.transform.position.y > 90)
         {
             finishTime = gameTime;
             DisplayFinishTime(finishTime);

@@ -8,12 +8,22 @@ public abstract class InteractableNPC : MonoBehaviour
     protected GameObject player;
     protected Vector2 playerPos;
     private const double RANGE_THRESHOLD = 3.0; //maximum range in which the player is "near" this NPC. 
-
+    [SerializeField] GameObject canTalkPrefab;
+    private GameObject canTalkIcon;
     protected PlayerInfo playerInfo = PlayerInfo.Instance;
+    protected float curveSpeed = 1;
+    protected float speed = 0.5f;
+    protected float radius = 0.5f;
+    protected float fTime = 0;
+    protected Vector3 lastPos = Vector3.zero;
+
 
     void Start()
     {
         player = GameObject.FindWithTag("Player");
+        var npc = this.gameObject.transform.position;
+        this.canTalkIcon = Instantiate(canTalkPrefab, new Vector3(npc.x, npc.y + 1.25f, npc.z-5), Quaternion.identity);
+      
     }
 
     void Update()
@@ -21,12 +31,22 @@ public abstract class InteractableNPC : MonoBehaviour
         playerPos = player.transform.position;
         //if the player is close and facing me, there should be some indicator that they can interact with me
         if (playerInteractionPossible()) {
+          
+            canTalkIcon.SetActive(true);
 
             //if the interaction can happen and they press enter, they're trying to start an interaction.
             if (interactButtonPressed()) {
                 onInteraction();
             }
+        } else
+        {
+            canTalkIcon.SetActive(false);
         }
+
+        fTime += Time.deltaTime * curveSpeed;
+
+        Vector3 sine = new Vector3(0, Mathf.Sin(fTime)/5, 0);
+        this.canTalkIcon.transform.position += (sine) * Time.deltaTime;
     }
 
     protected bool playerInteractionPossible() {

@@ -184,16 +184,25 @@ public class PlayerMovement : MonoBehaviour {
                 delta = newDelta;
                 break;
             case PlayerState.Moving_On_Ice:
+                lastDir = playerInformation.getLastDirection();
+                playerInformation.setLastDirection(delta.x, delta.y, deltaX, deltaY);
+                if (lastDir != playerInformation.getLastDirection())
+                    triggerAnimator(playerInformation.getLastDirection());
                 iceSoundEffect.Play();
                 if (!collidedWithBoundary()) {
                     rb2d.position = rb2d.position + delta * Time.deltaTime;
                 }
+               
                 break;
             case PlayerState.Stopped_On_Ice:
+                lastDir = playerInformation.getLastDirection();
+                playerInformation.setLastDirection(delta.x, delta.y, deltaX, deltaY);
+                if (lastDir != playerInformation.getLastDirection())
+                    triggerAnimator(playerInformation.getLastDirection());
                 if (!collidedWithBoundary()) {
-                    rb2d.position = rb2d.position + newDelta * Time.deltaTime;
+                    rb2d.position = rb2d.position + newDelta * Time.deltaTime;    
                 }
-
+                
                 break;
         }
         //Debug.Log(state);
