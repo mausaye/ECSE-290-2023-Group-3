@@ -4,7 +4,7 @@ Frosty Campus Dash is a fun puzzle game built with Unity and C#. Set during the 
 Frosty Campus Dash offers hundreds of unique puzzles (generated and validated by a Python script) for users to enjoy, ensuring no two experiences are the same. Additionally, you can increase the game's challenge by playing our Night Mode version.
 
 ## Video Demo
-https://youtu.be/wqUI0tLWT20
+https://youtu.be/L14mvAFfCgI
 
 ## Main Menu UI
 <img width="1512" alt="Screenshot 2024-06-14 at 4 50 45 PM" src="https://github.com/mausaye/ECSE-290-2023-Group-3/assets/78183720/946d4bbc-a757-423a-ab32-02a6524a6629">
